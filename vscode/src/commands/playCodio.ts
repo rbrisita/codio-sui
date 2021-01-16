@@ -23,9 +23,7 @@ export default async function playCodio(
         return;
       }
       if (player && player.isPlaying) {
-        UI.showMessage(MESSAGES.stopCodio);
-        player.pause();
-        player.closeCodio();
+        player.stop();
       }
       if (codioUri) {
         const codioUnzippedFolder = await fsManager.getCodioUnzipped(codioUri);
@@ -44,8 +42,7 @@ export default async function playCodio(
 }
 
 async function loadAndPlay(player: Player, path, workspacePath) {
-  UI.showMessage(MESSAGES.codioStart);
   await player.loadCodio(path, workspacePath);
   await player.startCodio();
-  UI.showPlayerProgressBar(player);
+  UI.showStatusBarProgress(player);
 }

@@ -71,6 +71,16 @@ export default class Player {
     this.isPlaying = true;
   }
 
+  /**
+   * Stop the currently playing codio.
+   */
+  stop(): void {
+    if (this.isPlaying) {
+      this.pause();
+    }
+    this.closeCodio();
+  }
+
   pause() {
     this.lastStoppedTime = Date.now();
     this.codeEditorPlayer.pause();
