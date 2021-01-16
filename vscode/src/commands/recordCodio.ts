@@ -46,5 +46,5 @@ export default async function recordCodio(
 
   UI.showMessage(MESSAGES.startingToRecord);
   recorder.startRecording();
-  UI.showRecorderProgressBar(recorder);
+  UI.showRecorderStatusBar(recorder);
 }

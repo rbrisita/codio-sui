@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/wix-incubator/codio"
     },
-    "version": "0.4.0",
+    "version": "0.5.0",
     "license": "MIT",
     "publisher": "Wix",
     "icon": "media/icon.png",
@@ -35,13 +35,12 @@
     "activationEvents": [
         "onView:codioMessages",
         "onCommand:codio.recordCodio",
-        "onCommand:codio.recordCodioAndAddToProject",
+        "onCommand:codio.recordCodioToProject",
         "onCommand:codio.finishRecording",
         "onCommand:codio.trimEnd",
         "onCommand:codio.playCodio",
         "onCommand:codio.playCodioTask",
         "onCommand:codio.stopCodio",
-        "onCommand:codio.pauseRecording",
         "onCommand:codio.resumeCodio",
         "onCommand:codio.playFrom",
         "onCommand:codio.executeFile"
@@ -66,8 +65,8 @@
         },
         "commands": [
             {
-                "command": "codio.recordCodioAndAddToProject",
-                "title": "Record Codio and Add to Project",
+                "command": "codio.recordCodioToProject",
+                "title": "Record Codio to Project",
                 "category": "Codio",
                 "icon": {
                     "light": "media/light/microphone.svg",
@@ -182,9 +181,9 @@
             ],
             "view/title": [
                 {
-                    "command": "codio.recordCodioAndAddToProject",
+                    "command": "codio.recordCodioToProject",
                     "when": "!inCodioRecording && !inCodioSession && view == codioMessages",
-                    "group": "navigation"
+                    "group": "navigation@1"
                 },
                 {
                     "command": "codio.finishRecording",

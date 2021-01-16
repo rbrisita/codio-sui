@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import FSManager from '../filesystem/FSManager';
-import { PLAY_CODIO, RECORD_CODIO_AND_ADD_TO_PROJECT } from '../consts/command_names';
+import { PLAY_CODIO, RECORD_CODIO_TO_PROJECT } from '../consts/command_names';
 import { join } from 'path';
 import * as parser from 'subtitles-parser-vtt';
 
@@ -69,12 +69,11 @@ class RecordActionItem extends vscode.TreeItem {
       dark: join(extensionPath, 'media/dark/microphone.svg'),
       light: join(extensionPath, 'media/light/microphone.svg'),
     };
+    this.tooltip = 'Record Codio to Project';
     this.command = {
-      command: RECORD_CODIO_AND_ADD_TO_PROJECT,
-      title: 'Record Codio and Add to Project',
-      arguments: [],
+      command: RECORD_CODIO_TO_PROJECT,
+      title: '',
     };
-    this.contextValue = 'codio';
   }
 }
 

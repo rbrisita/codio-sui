@@ -22,13 +22,13 @@ You can use codio to create interactive tutorials, messages and documentation th
 
 <img width="800px" src="https://user-images.githubusercontent.com/8999993/81228522-dd8db580-8ff6-11ea-834b-4c5a6120c3fa.gif" />
 
-You can record a codio through the command palette using the `Codio: Record Codio` and `Codio: Record Codio and Add to Project` commands or the the Codio View in the explorer tab.
+You can record a codio through the command palette using the `Codio: Record Codio` and `Codio: Record Codio to Project` commands or the the Codio View in the explorer tab.
 
 Codio will then prompt you to name your recording. When you are done, Codio will start recording.
 
 You can finish the recording session through the command palette using the `Codio: Save Recording` command or by pressing cancel on the recording progress message. You can also use the save icon in the control panel of the Codio View, under the explorer tab.
 
-if your are using the `Codio: Record Codio and Add to Project` command, codios will be saved in a `.codio` folder in your current open workspace. If you use the `Codio: Record Codio` command, codio files will be saved in the codio library, located at `~/Library/codio/codios`.
+if your are using the `Codio: Record Codio to Project` command, codios will be saved in a `.codio` folder in your current open workspace. If you use the `Codio: Record Codio` command, codio files will be saved in the codio library, located at `~/Library/codio/codios`.
 
 ### Playing a Codio
 

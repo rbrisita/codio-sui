@@ -52,8 +52,8 @@ export async function activate(context: ExtensionContext) {
     },
   );
 
-  const recordCodioAndAddToProjectDisposable = commands.registerCommand(
-    COMMAND_NAMES.RECORD_CODIO_AND_ADD_TO_PROJECT,
+  const recordCodioToProjectDisposable = commands.registerCommand(
+    COMMAND_NAMES.RECORD_CODIO_TO_PROJECT,
     async () => {
       const { workspaceUri, codioUri, getCodioName } = await getWorkspaceUriAndCodioDestinationUri();
       if (workspaceUri && codioUri && getCodioName) {
@@ -118,6 +118,7 @@ export async function activate(context: ExtensionContext) {
 
   context.subscriptions.push(recordCodioDisposable);
   context.subscriptions.push(finishRecordingDisposable);
+  context.subscriptions.push(recordCodioToProjectDisposable);
   context.subscriptions.push(playCodioDisposable);
   context.subscriptions.push(playCodioTaskDisposable);
   context.subscriptions.push(stopCodioDisposable);

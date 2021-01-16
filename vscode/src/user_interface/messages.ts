@@ -1,7 +1,6 @@
-import { window, ProgressLocation, StatusBarItem, StatusBarAlignment } from 'vscode';
+import { window, StatusBarItem, StatusBarAlignment } from 'vscode';
 import Player from '../player/Player';
 import Recorder from '../recorder/Recorder';
-import { finishRecording } from '../commands';
 import * as COMMAND_NAMES from '../consts/command_names';
 
 export const showCodioNameInputBox = async () => await window.showInputBox({ prompt: 'Give your codio a name:' });
@@ -18,8 +17,6 @@ export const showPlayFromInputBox = async (player) =>
 
 export const MESSAGES = {
   startingToRecord: 'Starting to record',
-  abortRecording: 'Aborted Recording.',
-  savingRecording: 'Saving recording...',
   recordingSaved: 'Recording saved.',
   cantPlayWhileRecording: 'Cant play Codio while recording',
   alreadyPlaying: 'You already have a Codio playing.',
@@ -50,9 +47,6 @@ class UIController {
     }
 
     this.statusBar = window.createStatusBarItem(StatusBarAlignment.Right, 101);
-    this.statusBar.command = COMMAND_NAMES.STOP_CODIO;
-    this.statusBar.tooltip = 'Click to stop codio.';
-
     context.subscriptions.push(this.statusBar);
   }
 
@@ -63,10 +57,12 @@ class UIController {
   }
 
   /**
-   * Show codio progress on status bar item. 
+   * Show codio player progress on status bar item. 
    * @param player Player to get updates from.
    */
-  showStatusBarProgress(player: Player) {
+  showPlayerStatusBar(player: Player) {
+    this.statusBar.command = COMMAND_NAMES.STOP_CODIO;
+    this.statusBar.tooltip = 'Stop Codio';
     this.statusBar.show();
 
     player.onTimerUpdate(async (currentTime, totalTime) => {
@@ -79,25 +75,22 @@ class UIController {
     });
   }
 
-  showRecorderProgressBar(recorder: Recorder) {
-    if (!this.shouldDisplayMessages) {
-      return;
-    }
+  /**
+   * Show codio recorder progress on status bar item. 
+   * @param recorder Recorder to get updatess from.
+   */
+  showRecorderStatusBar(recorder: Recorder) {
+    this.statusBar.command = COMMAND_NAMES.FINISH_RECORDING;
+    this.statusBar.tooltip = 'Save Recording';
+    this.statusBar.show();
 
-    window.withProgress(
-      {
-        location: ProgressLocation.Notification,
-        title: 'Recording Codio. ',
-        cancellable: true,
-      },
-      async (progress, token) => {
-        token.onCancellationRequested(() => finishRecording(recorder));
-        recorder.onTimerUpdate(async (currentTime) => {
-          progress.report({ message: `${currentTime}` });
-        });
-        await recorder.process;
-      },
-    );
+    recorder.onTimerUpdate(async (currentTime) => {
+      this.statusBar.text = `$(pulse) Recording Codio $(mention) ${Math.round(currentTime)}s $(stop-circle)`;
+    });
+
+    recorder.process.then(() => {
+      this.statusBar.hide();
+    });
   }
 }
 
