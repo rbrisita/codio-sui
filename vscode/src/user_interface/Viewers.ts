@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import FSManager from '../filesystem/FSManager';
-import { PLAY_CODIO, RECORD_CODIO_AND_ADD_TO_PROJECT } from '../consts/command_names';
+import { PLAY_CODIO, RECORD_CODIO_TO_PROJECT } from '../consts/command_names';
 import { join } from 'path';
 
 export async function registerTreeViews(fsManager: FSManager, extensionPath: string) {
@@ -51,16 +51,11 @@ export class CodiosDataProvider implements vscode.TreeDataProvider<vscode.TreeIt
         });
       } else {
         const recordCodioItem = new vscode.TreeItem('Record Codio');
-        recordCodioItem.iconPath = {
-          dark: join(this.extensionPath, 'media/microphone.svg'),
-          light: join(this.extensionPath, 'media/microphone-light.svg'),
-        };
+        recordCodioItem.tooltip = 'Record Codio to Project';
         recordCodioItem.command = {
-          command: RECORD_CODIO_AND_ADD_TO_PROJECT,
-          title: 'Record Codio and Add to Project',
-          arguments: [],
+          command: RECORD_CODIO_TO_PROJECT,
+          title: ''
         };
-        recordCodioItem.contextValue = 'codio';
         return [recordCodioItem];
       }
     }

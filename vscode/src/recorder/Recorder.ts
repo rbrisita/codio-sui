@@ -64,9 +64,9 @@ export default class Recorder {
     commands.executeCommand('setContext', 'inCodioRecording', true);
   }
 
-    async setRecordingDevice(prompt: (items: string[]) => Promise<string | undefined>) : Promise<boolean> {
-        return this.audioRecorder.setDevice(prompt);
-    }
+  async setRecordingDevice(prompt: (items: string[]) => Promise<string | undefined>): Promise<boolean> {
+    return this.audioRecorder.setDevice(prompt);
+  }
 
   async stopRecording() {
     await this.audioRecorder.stopRecording();

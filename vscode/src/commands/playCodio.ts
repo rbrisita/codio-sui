@@ -44,5 +44,5 @@ export default async function playCodio(
 async function loadAndPlay(player: Player, path, workspacePath) {
   await player.loadCodio(path, workspacePath);
   await player.startCodio();
-  UI.showStatusBarProgress(player);
+  UI.showPlayerStatusBar(player);
 }
