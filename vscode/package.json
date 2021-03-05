@@ -1,9 +1,9 @@
 {
-    "name": "codio",
-    "displayName": "Codio Format",
+    "name": "codio-sui",
+    "displayName": "Codio-SUI",
     "description": "Record and playback the process of programming",
     "repository": {
-        "url": "https://github.com/wix-incubator/codio",
+        "url": "https://github.com/rbrisita/codio-sui",
         "directory": "vscode",
         "type": "git"
     },
@@ -14,7 +14,7 @@
         "codio.d.ts"
     ],
     "bugs": {
-        "url": "https://github.com/wix-incubator/codio"
+        "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
     "version": "0.5.0",
     "license": "MIT",

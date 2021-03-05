@@ -1,3 +1,18 @@
+## [0.5.0]
+- Added recorder status bar progress and interaction for when recording a codio
+
+## [0.4.0]
+- Added status bar progress and interaction for currently playing codio
+- Added `Stop Codio` command
+
+## [0.3.0]
+- Moved UI from editor title to codio view
+- Updated icons
+- Added theme paths for icons
+
+## [0.2.0]
+- Added subtitles support
+
 ## [0.1.14]
 - Fixed flaky text insertion when typing fast
 - Added ability to choose audio recording device when there are multiple options
