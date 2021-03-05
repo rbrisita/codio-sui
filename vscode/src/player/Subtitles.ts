@@ -56,7 +56,7 @@ export default class Subtitles {
    */
   destroy(): void {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    this.play = () => {};
+    this.play = () => { };
     this.oc.dispose();
     this.oc = null;
   }
@@ -94,6 +94,10 @@ export default class Subtitles {
     const cue = this.cues.find((cue) => {
       return cue.startTime >= timeMs;
     });
+    if (!cue) {
+      return;
+    }
+
     this.startMS = Date.now() - timeMs;
     this.showCue(cue, cue.startTime - timeMs);
   }
