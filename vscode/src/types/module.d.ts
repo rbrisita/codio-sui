@@ -21,14 +21,14 @@ declare interface CodioSerializedEvent {
   type: string;
   data: {
     path?: string | undefined;
-    time: numbebr;
+    time: number;
   };
 }
 declare interface CodioTextEvent extends CodioEvent {
   type: 'text';
   data: {
     uri: Uri;
-    changes: TextDocumentContentChangeEvent[];
+    changes: readonly TextDocumentContentChangeEvent[];
     time: number;
   };
 }
@@ -37,7 +37,7 @@ declare interface CodioSerializedTextEvent extends CodioSerializedEvent {
   type: 'text';
   data: {
     path: string;
-    changes: TextDocumentContentChangeEvent[];
+    changes: readonly TextDocumentContentChangeEvent[];
     time: number;
   };
 }
@@ -63,7 +63,7 @@ declare interface CodioSelectionEvent extends CodioEvent {
   type: 'selection';
   data: {
     uri: Uri;
-    selections: Selection[];
+    selections: readonly Selection[];
     time: number;
   };
 }
