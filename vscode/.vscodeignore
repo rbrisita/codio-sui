@@ -8,3 +8,6 @@ vsc-extension-quickstart.md
 **/tslint.json
 **/*.map
 **/*.ts
+eslint.diff
+deploy_vsix.ps1
+out/src
