@@ -9,6 +9,12 @@ declare interface Codio extends Metadata {
   workspaceRoot?: Uri;
 }
 
+declare interface RecordProject {
+  workspaceUri: Uri,
+  codioUri: Uri,
+  getCodioName: () => Promise<string>
+}
+
 declare interface CodioEvent {
   type: string;
   data: {

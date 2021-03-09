@@ -55,9 +55,9 @@ export async function activate(context: ExtensionContext) {
   const recordCodioToProjectDisposable = commands.registerCommand(
     COMMAND_NAMES.RECORD_CODIO_TO_PROJECT,
     async () => {
-      const { workspaceUri, codioUri, getCodioName } = await getWorkspaceUriAndCodioDestinationUri();
-      if (workspaceUri && codioUri && getCodioName) {
-        codioCommands.recordCodio(fsManager, player, recorder, codioUri, workspaceUri, getCodioName);
+      const rp: RecordProject = await getWorkspaceUriAndCodioDestinationUri();
+      if (rp.workspaceUri && rp.codioUri && rp.getCodioName) {
+        codioCommands.recordCodio(fsManager, player, recorder, rp.codioUri, rp.workspaceUri, rp.getCodioName);
       }
     },
   );
