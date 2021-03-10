@@ -36,16 +36,24 @@ export default class Player {
       this.codioPath = codioPath;
       const timeline = await FSManager.loadTimeline(this.codioPath);
       this.codioLength = timeline.codioLength;
-      this.codeEditorPlayer = new CodeEditorPlayer(
+
+      this.codeEditorPlayer = new CodeEditorPlayer();
+      let loaded = this.codeEditorPlayer.load(
         workspaceToPlayOn ? workspaceToPlayOn : FSManager.workspacePath(this.codioPath),
-        timeline,
+        timeline
       );
+      if (!loaded) {
+        this.codeEditorPlayer.destroy();
+      }
+
       this.audioPlayer = new AudioHandler(FSManager.audioPath(this.codioPath));
+
       this.subtitlesPlayer = new Subtitles();
-      const loaded = await this.subtitlesPlayer.load(FSManager.subtitlesPath(this.codioPath));
+      loaded = await this.subtitlesPlayer.load(FSManager.subtitlesPath(this.codioPath));
       if (!loaded) {
         this.subtitlesPlayer.destroy();
       }
+
       this.timer = new Timer(this.codioLength);
       this.timer.onFinish(() => this.pause());
     } catch (e) {

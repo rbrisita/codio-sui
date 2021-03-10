@@ -1,8 +1,7 @@
 import { removeSelection } from '../editor/event_dispatcher';
 import { createFrame, applyFrame } from '../editor/frame';
 import deserializeEvents from '../editor/deserialize';
-import { Uri, window } from 'vscode';
-import { join } from 'path';
+import { window } from 'vscode';
 import { overrideEditorText } from '../utils';
 import {
   createTimelineWithAbsoluteTimes,
@@ -19,9 +18,26 @@ export default class CodeEditorPlayer {
   initialFrame: Array<CodioFile>;
   workspaceFolder: string;
 
-  constructor(workspacePath, timeline) {
+  /**
+   * Load given data to create events and initial frame.
+   * @param workspacePath Path to where codio lives.
+   * @param timeline Object containing properties to act on.
+   * @returns True if loaded correctly; false otherwise.
+   */
+  load(workspacePath, timeline): Boolean {
     this.events = deserializeEvents(timeline.events, workspacePath);
     this.initialFrame = deserializeFrame(timeline.initialFrame, workspacePath);
+    return !!this.events.length || !!this.initialFrame.length;
+  }
+
+  /**
+   * Guard against future errors.
+   */
+  destroy(): void {
+    this.play = () => { };
+    this.pause = () => { };
+    this.moveToFrame = (): Promise<void> => Promise.resolve();
+    this.getTimeline = () => [];
   }
 
   play(events: Array<CodioEvent>, time) {
