@@ -71,14 +71,10 @@ export default class Player {
   }
 
   async startCodio() {
-    try {
-      this.process = new Promise((resolve) => (this.closeCodioResolver = resolve));
-      await this.codeEditorPlayer.moveToFrame(0);
-      this.play(this.codeEditorPlayer.events, this.relativeActiveTime);
-      this.updateContext(IN_CODIO_SESSION, true);
-    } catch (e) {
-      console.log('startCodio failed', e);
-    }
+    this.process = new Promise((resolve) => (this.closeCodioResolver = resolve));
+    await this.codeEditorPlayer.moveToFrame(0);
+    this.play(this.codeEditorPlayer.events, this.relativeActiveTime);
+    this.updateContext(IN_CODIO_SESSION, true);
   }
 
   /**
