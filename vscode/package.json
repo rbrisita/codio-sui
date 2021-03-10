@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.5.5",
+    "version": "0.5.6",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -228,7 +228,7 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "rm codio-sui-*.vsix && npm run compile",
+        "vscode:prepublish": "rm -f codio-sui-*.vsix && npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile",

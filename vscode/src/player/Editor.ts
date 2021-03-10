@@ -12,6 +12,7 @@ import {
 } from '../editor/event_timeline';
 import deserializeFrame from '../editor/frame/deserialize_frame';
 import { getInitialFilePathAndContentFromFrame } from '../editor/frame/create_frame';
+import { UI } from '../user_interface/messages';
 export default class CodeEditorPlayer {
   currentActionTimer: any;
   events: Array<CodioEvent>;
@@ -49,7 +50,11 @@ export default class CodeEditorPlayer {
   async moveToFrame(time: number) {
     if (time === 0) {
       const { uri, content } = getInitialFilePathAndContentFromFrame(this.initialFrame);
-      await window.showTextDocument(uri);
+      try {
+        await window.showTextDocument(uri);
+      } catch (e) {
+        UI.showError(e.message);
+      }
       await overrideEditorText(window.activeTextEditor, content);
     } else {
       const initialToCurrentFrameActions = cutTimelineUntil(this.events, time);

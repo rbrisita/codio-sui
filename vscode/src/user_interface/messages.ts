@@ -57,6 +57,14 @@ class UIController {
   }
 
   /**
+   * Show given message as an error pop-up.
+   * @param message Message to show in error pop-up.
+   */
+  showError(message): void {
+    window.showErrorMessage(message);
+  }
+
+  /**
    * Show codio player progress on status bar item. 
    * @param player Player to get updates from.
    */
