@@ -23,7 +23,7 @@ export default class CodeEditorRecorder {
   onDidChangeTextEditorVisibleRangesListener: Disposable;
 
   initialFrame: Array<CodioFile> = [];
-  codioEditors: Array<any>;
+  codioEditors: Array<any> = [];
   records: Array<any> = [];
 
   record() {
@@ -54,9 +54,11 @@ export default class CodeEditorRecorder {
   }
 
   stopRecording() {
-    this.onDidChangeActiveTextEditorListener.dispose();
-    this.onDidChangeTextEditorSelectionListener.dispose();
-    this.onDocumentTextChangedListener.dispose();
+    if (window.activeTextEditor) {
+      this.onDidChangeActiveTextEditorListener.dispose();
+      this.onDidChangeTextEditorSelectionListener.dispose();
+      this.onDocumentTextChangedListener.dispose();
+    }
   }
 
   getTimelineContent(recordingStartTime, workspaceRoot?: Uri) {
