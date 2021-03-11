@@ -84,7 +84,6 @@ export default class Player {
    */
   private updateContext(context: string, value: any): void {
     commands.executeCommand('setContext', context, value);
-    FSManager.update();
   }
 
   /**
