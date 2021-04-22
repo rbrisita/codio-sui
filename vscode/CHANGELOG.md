@@ -1,3 +1,6 @@
+## [0.6.0]
+- Player pauses on mouse/keyboard interaction.
+
 ## [0.5.0]
 - Added recorder status bar progress and interaction for when recording a codio
 

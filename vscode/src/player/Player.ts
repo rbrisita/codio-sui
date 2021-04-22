@@ -1,7 +1,7 @@
 import CodeEditorPlayer from './Editor';
 import Timer from '../ProgressTimer';
 import FSManager from '../filesystem/FSManager';
-import { commands } from 'vscode';
+import { commands, Disposable, TextEditorSelectionChangeEvent, window } from 'vscode';
 import AudioHandler from '../audio/Audio';
 import Subtitles from './Subtitles';
 
@@ -24,6 +24,7 @@ export default class Player {
 
   closeCodioResolver: any;
   process: any;
+  onPauseHandler: Disposable;
 
   /**
    * Create all media needed for the codio.
@@ -102,6 +103,19 @@ export default class Player {
     this.timer.run(timeToStart);
     this.isPlaying = true;
     this.updateContext(IS_PLAYING, this.isPlaying);
+    this.listenToInteractions();
+  }
+
+  /**
+   * Listen to mouse or keyboard interactions.
+   */
+  private listenToInteractions(): void {
+    this.onPauseHandler = window.onDidChangeTextEditorSelection((e: TextEditorSelectionChangeEvent) => {
+      if (e.kind) {
+        this.onPauseHandler.dispose();
+        this.pause();
+      }
+    });
   }
 
   /**
@@ -122,6 +136,7 @@ export default class Player {
     this.audioPlayer.pause();
     this.subtitlesPlayer.pause();
     this.timer.stop();
+    this.onPauseHandler?.dispose();
   }
 
   pause(): void {
@@ -143,6 +158,7 @@ export default class Player {
     this.subtitlesPlayer.stop();
     this.closeCodioResolver();
     this.updateContext(IN_CODIO_SESSION, false);
+    this.onPauseHandler?.dispose();
   }
 
   onTimerUpdate(observer) {
