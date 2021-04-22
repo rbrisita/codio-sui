@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.6.0",
+    "version": "0.6.1",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -228,7 +228,10 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "rm -f codio-*.vsix && npm run compile",
+        "vscode:prepublish": "rm -rf out && rm -f codio-*.vsix && npm run -S esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run -S esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run -S esbuild-base -- --sourcemap --watch",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile",
@@ -241,6 +244,7 @@
         "@types/vscode": "^1.52.0",
         "@typescript-eslint/eslint-plugin": "^3.4.0",
         "@typescript-eslint/parser": "^3.4.0",
+        "esbuild": "^0.11.12",
         "eslint": "^7.3.1",
         "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-prettier": "^3.1.4",

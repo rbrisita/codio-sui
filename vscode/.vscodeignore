@@ -1,7 +1,10 @@
 .vscode/**
 .vscode-test/**
+node_modules
 out/test/**
+out/src
 src/**
+.codio/**
 .gitignore
 vsc-extension-quickstart.md
 **/tsconfig.json
@@ -10,4 +13,3 @@ vsc-extension-quickstart.md
 **/*.ts
 eslint.diff
 deploy_vsix.ps1
-out/src
