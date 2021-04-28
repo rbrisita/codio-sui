@@ -172,6 +172,52 @@
             }
         ],
         "menus": {
+            "commandPalette": [
+                {
+                  "command": "codio.playFrom",
+                  "when": "!inCodioRecording"
+                },
+                {
+                  "command": "codio.playCodio",
+                  "when": "!inCodioRecording && !inCodioSession && !isPlaying"
+                },
+                {
+                  "command": "codio.stopCodio",
+                  "when": "!inCodioRecording && inCodioSession && isPlaying"
+                },
+                {
+                  "command": "codio.pauseCodio",
+                  "when": "!inCodioRecording && inCodioSession && isPlaying"
+                },
+                {
+                  "command": "codio.resumeCodio",
+                  "when": "!inCodioRecording && inCodioSession && !isPlaying"
+                },
+                {
+                  "command": "codio.pauseOrResume",
+                  "when": "!inCodioRecording && inCodioSession"
+                },
+                {
+                  "command": "codio.forward",
+                  "when": "!inCodioRecording && inCodioSession"
+                },
+                {
+                  "command": "codio.rewind",
+                  "when": "!inCodioRecording && inCodioSession"
+                },
+                {
+                  "command": "codio.recordCodio",
+                  "when": "!inCodioRecording && !inCodioSession"
+                },
+                {
+                  "command": "codio.recordCodioToProject",
+                  "when": "!inCodioRecording && !inCodioSession"
+                },
+                {
+                  "command": "codio.finishRecording",
+                  "when": "inCodioRecording && !inCodioSession"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "codio.playCodio",
