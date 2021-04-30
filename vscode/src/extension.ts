@@ -18,10 +18,10 @@ const {
   finishRecording,
   playCodio,
   playCodioTask,
+  playFrom,
   pauseCodio,
   pauseOrResume,
   resumeCodio,
-  playFrom,
   rewind,
   forward,
 } = createSdk(player, recorder, fsManager);
@@ -31,10 +31,10 @@ export {
   finishRecording,
   playCodio,
   playCodioTask,
+  playFrom,
   pauseCodio,
   pauseOrResume,
   resumeCodio,
-  playFrom,
   rewind,
   forward,
 };
@@ -79,6 +79,10 @@ export async function activate(context: ExtensionContext) {
       codioCommands.playCodioTask(fsManager, player, recorder, source, workspaceUri);
     },
   );
+  
+  const playFromDisposable = commands.registerCommand(COMMAND_NAMES.PLAY_FROM, async (time?: number) => {
+    codioCommands.playFrom(fsManager, player, time);
+  });
 
   const stopCodioDisposable = commands.registerCommand(COMMAND_NAMES.STOP_CODIO, () => {
     player.stop();
@@ -94,10 +98,6 @@ export async function activate(context: ExtensionContext) {
 
   const resumeCodioDisposable = commands.registerCommand(COMMAND_NAMES.RESUME_CODIO, () => {
     codioCommands.resumeCodio(player);
-  });
-
-  const playFromDisposable = commands.registerCommand(COMMAND_NAMES.PLAY_FROM, async (time?: number) => {
-    codioCommands.playFrom(player, time);
   });
 
   const rewindDisposable = commands.registerCommand(COMMAND_NAMES.REWIND, async (time?: number) => {
