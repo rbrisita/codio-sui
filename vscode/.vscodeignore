@@ -13,3 +13,4 @@ vsc-extension-quickstart.md
 **/*.ts
 eslint.diff
 deploy*.*
+out/src

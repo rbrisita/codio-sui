@@ -1,4 +1,3 @@
-import executeFile from './executeFile';
 import pauseOrResume from './pauseOrResume';
 import playCodio from './playCodio';
 import playCodioTask from './playCodioTask';
@@ -11,7 +10,6 @@ import recordCodio from './recordCodio';
 import trimEnd from './trimEnd';
 
 export {
-  executeFile,
   pauseOrResume,
   playCodio,
   playCodioTask,
