@@ -2,8 +2,8 @@ import executeFile from './executeFile';
 import pauseOrResume from './pauseOrResume';
 import playCodio from './playCodio';
 import playCodioTask from './playCodioTask';
-import { forward, rewind } from './rewindAndForward';
 import playFrom from './playFrom';
+import { forward, rewind } from './rewindAndForward';
 import resumeCodio from './resumeCodio';
 import pauseCodio from './pauseCodio';
 import finishRecording from './finishRecording';
@@ -15,9 +15,9 @@ export {
   pauseOrResume,
   playCodio,
   playCodioTask,
+  playFrom,
   forward,
   rewind,
-  playFrom,
   resumeCodio,
   pauseCodio,
   finishRecording,

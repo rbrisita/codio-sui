@@ -108,7 +108,7 @@ export default class Subtitles {
    * @param delay Time in milliseconds to delay showing given cue.
    */
   showCue(cue: Cue, delay: number): void {
-    if (!cue || delay === NaN) {
+    if (!cue || isNaN(delay)) {
       return;
     }
 

@@ -197,6 +197,7 @@ export default class Player {
       const relevantRelativeActions = this.codeEditorPlayer.getTimeline(relativeTimeToStart);
       const timeToStartInSeconds = relativeTimeToStart / 1000;
       this.play(relevantRelativeActions, timeToStartInSeconds);
+      this.updateContext(IN_CODIO_SESSION, true);
     } catch (e) {
       console.log('play from fail', e);
     }

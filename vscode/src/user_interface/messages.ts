@@ -12,22 +12,21 @@ export const showChooseAudioDevice = async (items: string[]): Promise<string | u
 
 export const showPlayFromInputBox = async (player) =>
   await window.showInputBox({
-    prompt: `Choose when to start from in seconds. Full Length is ${player.codioLength / 1000}`,
+    prompt: `Choose a starting time from 0 to ${player.codioLength / 1000} seconds.`,
   });
 
 export const MESSAGES = {
-  startingToRecord: 'Starting to record',
+  startingToRecord: 'Starting to record.',
   recordingSaved: 'Recording saved.',
-  cantPlayWhileRecording: 'Cant play Codio while recording',
+  cantPlayWhileRecording: "Can't play Codio while recording.",
   alreadyPlaying: 'You already have a Codio playing.',
-  invalidNumber: `Number is invalid`,
-  noActiveCodio: "You don't have an active Codio",
-  windowsNotSupported: 'Unfortunately, Codio Format does not work on Windows.',
+  noActiveCodio: "You don't have an active Codio.",
+  noStartTime: 'No start time entered.',
   ffmpegNotAvailable: `Looks like you haven't installed ffmpeg, which is required for Codio to work.
-     You can install it with brew: "brew install ffmpeg"`,
-  emptyCodioNameInvalid: 'No name, No Codio',
-  noRecordingDeviceAvailable: 'Codio Could not find an audio recording device',
-  noActiveWorkspace: 'You need to have an active workspace to record a Codio',
+     You can install it with brew: "brew install ffmpeg".`,
+  emptyCodioNameInvalid: 'Filename needed to save Codio to.',
+  noRecordingDeviceAvailable: 'Codio could not find an audio recording device.',
+  noActiveWorkspace: 'You need to have an active workspace to record a Codio.',
 };
 class UIController {
   shouldDisplayMessages: boolean;
