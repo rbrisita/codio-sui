@@ -11,7 +11,6 @@ export const DOWNLOAD_CODIO = 'codio.downloadCodio';
 export const SEND_MESSAGE = 'codio.sendMessage';
 export const RECORD_MESSAGE = 'codio.recordMessage';
 export const PLAY_MESSAGE = 'codio.playMessage';
-export const EXECUTE_FILE = 'codio.executeFile';
 export const REWIND = 'codio.rewind';
 export const FORWARD = 'codio.forward';
 export const PAUSE_OR_RESUME = 'codio.pauseOrResume';

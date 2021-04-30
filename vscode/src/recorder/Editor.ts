@@ -129,28 +129,4 @@ export default class CodeEditorRecorder {
       this.records.push(record);
     }
   };
-
-  executeFile = () => {
-    const document = window.activeTextEditor.document;
-    const outputChannel = window.createOutputChannel('codio');
-    let output = '';
-    const uri = document.uri;
-    document.save().then(() => {
-      outputChannel.show(true);
-      exec(`node ${uri.fsPath}`, (err, stdout, stderr) => {
-        if (stderr) {
-          output = stderr;
-          outputChannel.append(stderr);
-        }
-        if (stdout) {
-          outputChannel.append(stdout);
-          output = stdout;
-        }
-        if (output) {
-          const record = eventCreators.createCodioExecutionEvent(output);
-          this.records.push(record);
-        }
-      });
-    });
-  };
 }

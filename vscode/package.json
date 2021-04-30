@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.6.2",
+    "version": "0.6.3",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -42,8 +42,7 @@
         "onCommand:codio.playCodioTask",
         "onCommand:codio.stopCodio",
         "onCommand:codio.resumeCodio",
-        "onCommand:codio.playFrom",
-        "onCommand:codio.executeFile"
+        "onCommand:codio.playFrom"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -164,11 +163,6 @@
                     "light": "./media/light/circle_backward.svg",
                     "dark": "./media/dark/circle_backward.svg"
                 }
-            },
-            {
-                "command": "codio.executeFile",
-                "category": "Codio",
-                "title": "Execute FIle"
             }
         ],
         "menus": {

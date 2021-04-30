@@ -108,10 +108,6 @@ export async function activate(context: ExtensionContext) {
     codioCommands.forward(player, time);
   });
 
-  const executeFileDisposabble = commands.registerCommand(COMMAND_NAMES.EXECUTE_FILE, async () => {
-    codioCommands.executeFile(recorder);
-  });
-
   const trimEnd = commands.registerCommand(COMMAND_NAMES.TRIM_END, async () => {
     codioCommands.trimEnd(player);
   });
@@ -125,7 +121,6 @@ export async function activate(context: ExtensionContext) {
   context.subscriptions.push(pauseCodioDisposable);
   context.subscriptions.push(resumeCodioDisposable);
   context.subscriptions.push(playFromDisposable);
-  context.subscriptions.push(executeFileDisposabble);
   context.subscriptions.push(rewindDisposable);
   context.subscriptions.push(forwardDisposable);
   context.subscriptions.push(pauseOrResumeDisposable);

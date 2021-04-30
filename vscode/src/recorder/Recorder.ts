@@ -42,10 +42,6 @@ export default class Recorder {
     this.recordingSavedObservers = [];
   }
 
-  executeFile() {
-    this.codeEditorRecorder.executeFile();
-  }
-
   onTimerUpdate(observer) {
     this.timer.onUpdate(observer);
   }
