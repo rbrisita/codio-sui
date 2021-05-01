@@ -1,3 +1,6 @@
+## [0.7.0]
+- Recordings can now be canceled.
+
 ## [0.6.0]
 - Player pauses on mouse/keyboard interaction.
 

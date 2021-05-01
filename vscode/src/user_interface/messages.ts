@@ -21,6 +21,7 @@ export const showPlayFromInputBox = async (player: Player): Promise<string> => {
 export const MESSAGES = {
   startingToRecord: 'Starting to record.',
   recordingSaved: 'Recording saved.',
+  recordingCanceled: 'Recording canceled.',
   cantPlayWhileRecording: "Can't play Codio while recording.",
   alreadyPlaying: 'You already have a Codio playing.',
   noActiveCodio: "You don't have an active Codio.",

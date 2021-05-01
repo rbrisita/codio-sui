@@ -1,35 +1,52 @@
+/**
+ * Keep track of time passed and alert any observers.
+ */
 export default class CodioProgressTimer {
   codioLength: number | undefined;
   timer: NodeJS.Timer;
   currentSecond: number;
 
-  private onUpdateObservers: Array<Function> = [];
-  private onFinishObservers: Array<Function> = [];
+  private onUpdateObservers: Array<(currentSecond: number, totalSeconds: number) => void> = [];
+  private onFinishObservers: Array<() => void> = [];
 
-  constructor(codioLengh?: number) {
-    this.codioLength = codioLengh;
+  constructor(codioLength?: number) {
+    this.codioLength = codioLength;
   }
 
-  onFinish(observer) {
+  /**
+   * Add given observer to be notified when timer finished.
+   * @param observer Function to be executed when timer finishes.
+   */
+  onFinish(observer: () => void): void {
     this.onFinishObservers.push(observer);
   }
 
-  onUpdate(observer) {
+  /**
+   * Add given obeserver to be notified on timer updates.
+   * @param observer Function to be executed receiving current second and total seconds if applicable.
+   */
+  onUpdate(observer: (currentSecond: number, totalSeconds: number) => void): void {
     this.onUpdateObservers.push(observer);
   }
 
-  stop() {
+  stop(): void {
     clearInterval(this.timer);
   }
 
-  run(codioTime = 0) {
+  /**
+   * Run timer and alert observers on update and on finish.
+   * @param codioTime Time to set current second to.
+   */
+  run(codioTime = 0): void {
     try {
       if (this.timer) {
         clearInterval(this.timer);
       }
+
       this.currentSecond = codioTime;
       this.timer = setInterval(() => {
         this.currentSecond++;
+
         if (this.codioLength && this.currentSecond > this.codioLength / 1000) {
           this.onFinishObservers.forEach((observer) => observer());
           clearInterval(this.timer);

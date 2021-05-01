@@ -21,7 +21,7 @@ export default async function recordCodio(
   }
 
   if (player.isPlaying) {
-    player.closeCodio();
+    player.stop();
   }
 
   let codioName = '';
