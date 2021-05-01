@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.6.5",
+    "version": "0.7.0",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -37,6 +37,7 @@
         "onCommand:codio.recordCodio",
         "onCommand:codio.recordCodioToProject",
         "onCommand:codio.saveRecording",
+        "onCommand:codio.cancelRecording",
         "onCommand:codio.trimEnd",
         "onCommand:codio.playCodio",
         "onCommand:codio.playCodioTask",
@@ -67,28 +68,25 @@
                 "command": "codio.recordCodioToProject",
                 "title": "Record Codio to Project",
                 "category": "Codio",
-                "icon": {
-                    "light": "media/light/microphone.svg",
-                    "dark": "media/dark/microphone.svg"
-                }
+                "icon": "$(record)"
             },
             {
                 "command": "codio.recordCodio",
                 "category": "Codio",
                 "title": "Record Codio",
-                "icon": {
-                    "light": "media/light/microphone.svg",
-                    "dark": "media/dark/microphone.svg"
-                }
+                "icon": "$(record)"
             },
             {
                 "command": "codio.saveRecording",
                 "category": "Codio",
                 "title": "Save Recording",
-                "icon": {
-                    "light": "media/light/save.svg",
-                    "dark": "media/dark/save.svg"
-                }
+                "icon": "$(save)"
+            },
+            {
+                "command": "codio.cancelRecording",
+                "category": "Codio",
+                "title": "Cancel Recording",
+                "icon": "$(stop)"
             },
             {
                 "command": "codio.trimEnd",
@@ -99,10 +97,7 @@
                 "command": "codio.playCodio",
                 "category": "Codio",
                 "title": "Play Codio",
-                "icon": {
-                    "light": "./media/light/play.svg",
-                    "dark": "./media/dark/play.svg"
-                }
+                "icon": "$(play)"
             },
             {
                 "command": "codio.playCodioTask",
@@ -210,6 +205,10 @@
                 {
                   "command": "codio.saveRecording",
                   "when": "inCodioRecording && !inCodioSession"
+                },
+                {
+                  "command": "codio.cancelRecording",
+                  "when": "inCodioRecording && !inCodioSession"
                 }
             ],
             "view/item/context": [
@@ -228,7 +227,12 @@
                 {
                     "command": "codio.saveRecording",
                     "when": "inCodioRecording && !inCodioSession && view == codioMessages",
-                    "group": "navigation"
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "codio.cancelRecording",
+                    "when": "inCodioRecording && !inCodioSession && view == codioMessages",
+                    "group": "navigation@2"
                 },
                 {
                     "command": "codio.rewind",

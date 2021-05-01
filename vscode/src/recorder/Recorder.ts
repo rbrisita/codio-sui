@@ -5,6 +5,10 @@ import { Uri, commands } from 'vscode';
 import AudioHandler from '../audio/Audio';
 
 const CODIO_FORMAT_VERSION = '0.1.0';
+
+/**
+ * Manage media to record, cancel, stop, and save recordings.
+ */
 export default class Recorder {
   audioRecorder: AudioHandler;
   codeEditorRecorder: CodeEditorRecorder;
@@ -18,45 +22,48 @@ export default class Recorder {
   recordingLength = 0;
   isRecording = false;
 
-  recordingSavedObservers: Array<Function> = [];
-  process: any;
-  stopRecordingResolver: Function;
+  recordingSavedObservers: Array<() => void> = [];
+  process: Promise<unknown>;
+  stopRecordingResolver: (value?: unknown) => void;
 
-  async loadCodio(codioPath: string, codioName: string, destinationFolder?: Uri, workspaceRoot?: Uri) {
+  async loadCodio(codioPath: string, codioName: string, destinationFolder?: Uri, workspaceRoot?: Uri): Promise<void> {
     if (this.isRecording) {
       await this.stopRecording();
       this.saveRecording();
     }
     this.setInitialState(codioPath, codioName, destinationFolder, workspaceRoot);
+    this.audioRecorder = new AudioHandler(FSManager.audioPath(this.codioPath));
+    this.codeEditorRecorder = new CodeEditorRecorder();
+    this.timer = new Timer();
   }
 
-  setInitialState = (codioPath, codioName, destinationFolder, workspaceRoot) => {
+  private setInitialState(codioPath, codioName, destinationFolder, workspaceRoot) {
     this.codioPath = codioPath;
     this.codioName = codioName;
     this.destinationFolder = destinationFolder;
     this.workspaceRoot = workspaceRoot;
-    this.audioRecorder = new AudioHandler(FSManager.audioPath(this.codioPath));
-    this.codeEditorRecorder = new CodeEditorRecorder();
-    this.timer = new Timer();
     this.process = undefined;
     this.recordingSavedObservers = [];
   }
 
-  onTimerUpdate(observer) {
+  onTimerUpdate(observer: (currentSecond: number, totalSeconds: number) => void): void {
     this.timer.onUpdate(observer);
   }
 
-  onRecordingSaved(observer) {
+  onRecordingSaved(observer: () => void): void {
     this.recordingSavedObservers.push(observer);
   }
 
-  startRecording() {
-    this.isRecording = true;
+  /**
+   * Start recording on all media and set state.
+   */
+  startRecording(): void {
     this.codeEditorRecorder.record();
     this.audioRecorder.record();
     this.timer.run();
     this.process = new Promise((resolve) => (this.stopRecordingResolver = resolve));
     this.recordingStartTime = Date.now() + 300;
+    this.isRecording = true;
     commands.executeCommand('setContext', 'inCodioRecording', true);
   }
 
@@ -64,7 +71,18 @@ export default class Recorder {
     return this.audioRecorder.setDevice(prompt);
   }
 
-  async stopRecording() {
+  /**
+   * Cancel recording and reset state.
+   */
+  async cancel(): Promise<void> {
+    await this.stopRecording();
+    this.setInitialState('', '', '', '');
+  }
+
+  /**
+   * Stop recording and set state.
+   */
+  async stopRecording(): Promise<void> {
     await this.audioRecorder.stopRecording();
     this.codeEditorRecorder.stopRecording();
     this.timer.stop();
@@ -74,7 +92,11 @@ export default class Recorder {
     commands.executeCommand('setContext', 'inCodioRecording', false);
   }
 
-  async saveRecording() {
+  /**
+   * Save recording by getting timeline content and constructing objeccts to save to file.
+   * Alert any observers.
+   */
+  async saveRecording(): Promise<void> {
     try {
       const codioTimelineContent = this.codeEditorRecorder.getTimelineContent(
         this.recordingStartTime,

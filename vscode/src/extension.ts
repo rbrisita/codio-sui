@@ -35,6 +35,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
     codioCommands.saveRecording(recorder);
   });
 
+  const cancelRecordingDisposable = commands.registerCommand(CommandNames.CANCEL_RECORDING, () => {
+    codioCommands.cancelRecording(recorder);
+  });
+
   const playCodioDisposable = commands.registerCommand(
     CommandNames.PLAY_CODIO,
     async (source: Uri, workspaceUri?: Uri) => {
@@ -83,6 +87,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   context.subscriptions.push(recordCodioDisposable);
   context.subscriptions.push(saveRecordingDisposable);
+  context.subscriptions.push(cancelRecordingDisposable);
   context.subscriptions.push(recordCodioToProjectDisposable);
   context.subscriptions.push(playCodioDisposable);
   context.subscriptions.push(playCodioTaskDisposable);
