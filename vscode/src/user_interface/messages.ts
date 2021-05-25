@@ -1,19 +1,22 @@
 import { window, StatusBarItem, StatusBarAlignment } from 'vscode';
 import Player from '../player/Player';
 import Recorder from '../recorder/Recorder';
-import * as COMMAND_NAMES from '../consts/command_names';
+import { CommandNames } from '../commands';
 
-export const showCodioNameInputBox = async () => await window.showInputBox({ prompt: 'Give your codio a name:' });
+export const showCodioNameInputBox = async (): Promise<string> => {
+  return await window.showInputBox({ prompt: 'Give your codio a name:' });
+};
 
 export const showChooseAudioDevice = async (items: string[]): Promise<string | undefined> => {
   const audioDevice = await window.showQuickPick(items, { placeHolder: 'Choose an Audio Device to record from' });
   return audioDevice;
 };
 
-export const showPlayFromInputBox = async (player) =>
-  await window.showInputBox({
+export const showPlayFromInputBox = async (player: Player): Promise<string> => {
+  return await window.showInputBox({
     prompt: `Choose a starting time from 0 to ${player.codioLength / 1000} seconds.`,
   });
+};
 
 export const MESSAGES = {
   startingToRecord: 'Starting to record.',
@@ -64,17 +67,19 @@ class UIController {
   }
 
   /**
-   * Show codio player progress on status bar item. 
+   * Show codio player progress on status bar item.
    * @param player Player to get updates from.
    */
   showPlayerStatusBar(player: Player) {
-    this.statusBar.command = COMMAND_NAMES.STOP_CODIO;
+    this.statusBar.command = CommandNames.STOP_CODIO;
     this.statusBar.tooltip = 'Stop Codio';
     this.statusBar.show();
 
     player.onTimerUpdate(async (currentTime, totalTime) => {
       const percentage = (currentTime / totalTime) * 100;
-      this.statusBar.text = `$(megaphone) Codio $(mention)${Math.round(percentage)}% - ${Math.round(currentTime)}ms/${Math.round(totalTime)}ms $(stop-circle)`;
+      this.statusBar.text = `$(megaphone) Codio $(mention)${Math.round(percentage)}% - ${Math.round(
+        currentTime,
+      )}s/${Math.round(totalTime)}s $(stop-circle)`;
     });
 
     player.process.then(() => {
@@ -83,11 +88,11 @@ class UIController {
   }
 
   /**
-   * Show codio recorder progress on status bar item. 
+   * Show codio recorder progress on status bar item.
    * @param recorder Recorder to get updatess from.
    */
   showRecorderStatusBar(recorder: Recorder) {
-    this.statusBar.command = COMMAND_NAMES.SAVE_RECORDING;
+    this.statusBar.command = CommandNames.SAVE_RECORDING;
     this.statusBar.tooltip = 'Save Recording';
     this.statusBar.show();
 

@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { UI, MESSAGES, showChooseAudioDevice } from '../user_interface/messages';
 import Recorder from '../recorder/Recorder';
 import Player from '../player/Player';
@@ -34,9 +35,7 @@ export default async function recordCodio(
     return;
   }
 
-  const uuid = require('uuid');
-  const codioId = uuid.v4();
-  const path = await fsManager.createTempCodioFolder(codioId);
+  const path = await fsManager.createTempCodioFolder(uuid());
   await recorder.loadCodio(path, codioName, destUri, workspaceRoot);
   const isDeviceAvailable = await recorder.setRecordingDevice(showChooseAudioDevice);
   if (!isDeviceAvailable) {

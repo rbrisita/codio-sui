@@ -1,3 +1,4 @@
+import { Position, Range } from 'vscode';
 import { replaceRange, nthIndex } from '../../utils';
 
 export default class ShadowDocument {
@@ -8,7 +9,7 @@ export default class ShadowDocument {
     return this;
   }
 
-  replaceWithPosition(position, substitute) {
+  replaceWithPosition(position: Position, substitute: string): void {
     try {
       const start = this.transformPositionToIndex(position, this.text);
       const end = start;
@@ -18,7 +19,7 @@ export default class ShadowDocument {
     }
   }
 
-  replaceWithRange(range, substitute) {
+  replaceWithRange(range: Range, substitute: string): void {
     try {
       const start = this.transformPositionToIndex(range.start, this.text);
       const end = this.transformPositionToIndex(range.end, this.text);
@@ -28,7 +29,7 @@ export default class ShadowDocument {
     }
   }
 
-  transformPositionToIndex(position, str) {
+  private transformPositionToIndex(position: Position, str: string): number {
     if (position.line !== 0) {
       const startLineIndex = nthIndex(str, '\n', position.line);
       return startLineIndex + position.character + 1;

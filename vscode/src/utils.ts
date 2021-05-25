@@ -18,7 +18,7 @@ export const isMacOs = platform() === 'darwin';
 
 export const uriSeperator = '/';
 //ffmpeg
-export const checkForFfmpeg = async () => {
+export const checkForFfmpeg = async (): Promise<unknown> => {
   return new Promise((res) => {
     exec('ffmpeg -h', (error) => {
       res(!error);
@@ -27,7 +27,7 @@ export const checkForFfmpeg = async () => {
 };
 
 //editor
-export async function overrideEditorText(editor: vscode.TextEditor, newText: string) {
+export async function overrideEditorText(editor: vscode.TextEditor, newText: string): Promise<void> {
   const invalidRange = new vscode.Range(0, 0, editor.document.lineCount /*intentionally missing the '-1' */, 0);
   const fullRange = editor.document.validateRange(invalidRange);
   await editor.edit((edit) => edit.replace(fullRange, newText));
@@ -41,7 +41,7 @@ export function replaceRange(s: string, start: number, end: number, substitute: 
   return s.substring(0, start) + substitute + s.substring(end);
 }
 
-export function nthIndex(str, pat, n): number {
+export function nthIndex(str: string, pat: string, n: number): number {
   const L = str.length;
   let i = -1;
   while (n-- && i++ < L) {
@@ -53,7 +53,10 @@ export function nthIndex(str, pat, n): number {
   return i;
 }
 
-export async function asyncForEach(array, callback) {
+export async function asyncForEach(
+  array: Array<unknown>,
+  callback: (elem: unknown, i: number, arr: Array<unknown>) => unknown,
+): Promise<void> {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
   }
