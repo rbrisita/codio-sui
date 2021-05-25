@@ -15,7 +15,7 @@ const recorder = new Recorder();
 
 const {
   recordCodio,
-  finishRecording,
+  saveRecording,
   playCodio,
   playCodioTask,
   playFrom,
@@ -28,7 +28,7 @@ const {
 
 export {
   recordCodio,
-  finishRecording,
+  saveRecording,
   playCodio,
   playCodioTask,
   playFrom,
@@ -62,8 +62,8 @@ export async function activate(context: ExtensionContext) {
     },
   );
 
-  const finishRecordingDisposable = commands.registerCommand(COMMAND_NAMES.FINISH_RECORDING, () => {
-    codioCommands.finishRecording(recorder);
+  const saveRecordingDisposable = commands.registerCommand(COMMAND_NAMES.SAVE_RECORDING, () => {
+    codioCommands.saveRecording(recorder);
   });
 
   const playCodioDisposable = commands.registerCommand(
@@ -113,7 +113,7 @@ export async function activate(context: ExtensionContext) {
   });
 
   context.subscriptions.push(recordCodioDisposable);
-  context.subscriptions.push(finishRecordingDisposable);
+  context.subscriptions.push(saveRecordingDisposable);
   context.subscriptions.push(recordCodioToProjectDisposable);
   context.subscriptions.push(playCodioDisposable);
   context.subscriptions.push(playCodioTaskDisposable);

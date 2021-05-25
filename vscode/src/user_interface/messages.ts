@@ -87,7 +87,7 @@ class UIController {
    * @param recorder Recorder to get updatess from.
    */
   showRecorderStatusBar(recorder: Recorder) {
-    this.statusBar.command = COMMAND_NAMES.FINISH_RECORDING;
+    this.statusBar.command = COMMAND_NAMES.SAVE_RECORDING;
     this.statusBar.tooltip = 'Save Recording';
     this.statusBar.show();
 
