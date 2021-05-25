@@ -12,7 +12,7 @@ export default async function recordCodio(
   destUri?: Uri,
   workspaceRoot?: Uri,
   getCodioName?: () => Promise<string>,
-) {
+): Promise<void> {
   const hasFfmpeg = await checkForFfmpeg();
   if (!hasFfmpeg) {
     UI.showMessage(MESSAGES.ffmpegNotAvailable);

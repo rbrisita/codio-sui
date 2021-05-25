@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.6.3",
+    "version": "0.6.4",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -36,7 +36,7 @@
         "onView:codioMessages",
         "onCommand:codio.recordCodio",
         "onCommand:codio.recordCodioToProject",
-        "onCommand:codio.finishRecording",
+        "onCommand:codio.saveRecording",
         "onCommand:codio.trimEnd",
         "onCommand:codio.playCodio",
         "onCommand:codio.playCodioTask",
@@ -82,7 +82,7 @@
                 }
             },
             {
-                "command": "codio.finishRecording",
+                "command": "codio.saveRecording",
                 "category": "Codio",
                 "title": "Save Recording",
                 "icon": {
@@ -208,7 +208,7 @@
                   "when": "!inCodioRecording && !inCodioSession"
                 },
                 {
-                  "command": "codio.finishRecording",
+                  "command": "codio.saveRecording",
                   "when": "inCodioRecording && !inCodioSession"
                 }
             ],
@@ -226,7 +226,7 @@
                     "group": "navigation@1"
                 },
                 {
-                    "command": "codio.finishRecording",
+                    "command": "codio.saveRecording",
                     "when": "inCodioRecording && !inCodioSession && view == codioMessages",
                     "group": "navigation"
                 },

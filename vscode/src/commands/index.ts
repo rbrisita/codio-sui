@@ -5,7 +5,7 @@ import playFrom from './playFrom';
 import { forward, rewind } from './rewindAndForward';
 import resumeCodio from './resumeCodio';
 import pauseCodio from './pauseCodio';
-import finishRecording from './finishRecording';
+import saveRecording from './saveRecording';
 import recordCodio from './recordCodio';
 import trimEnd from './trimEnd';
 
@@ -18,7 +18,7 @@ export {
   rewind,
   resumeCodio,
   pauseCodio,
-  finishRecording,
+  saveRecording,
   recordCodio,
   trimEnd,
 };
