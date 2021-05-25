@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import FSManager from '../filesystem/FSManager';
-import { PLAY_CODIO, RECORD_CODIO_TO_PROJECT } from '../consts/command_names';
 import { join } from 'path';
 import * as parser from 'subtitles-parser-vtt';
+import { CommandNames } from '../commands';
 
-export async function registerTreeViews(fsManager: FSManager, extensionPath: string) {
+export async function registerTreeViews(fsManager: FSManager, extensionPath: string): Promise<void> {
   const codioTreeDataProvider = new CodiosDataProvider(fsManager, extensionPath);
   vscode.window.createTreeView('codioMessages', { treeDataProvider: codioTreeDataProvider });
   fsManager.onCodiosChanged(() => codioTreeDataProvider.refresh());
@@ -12,7 +12,7 @@ export async function registerTreeViews(fsManager: FSManager, extensionPath: str
 }
 
 export class CodiosDataProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
-  codios: Array<any>;
+  codios: Array<unknown>;
   fsManager: FSManager;
   private extensionPath: string;
 
@@ -25,12 +25,12 @@ export class CodiosDataProvider implements vscode.TreeDataProvider<vscode.TreeIt
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  constructor(fsManager, extensionPath) {
+  constructor(fsManager: FSManager, extensionPath: string) {
     this.fsManager = fsManager;
     this.extensionPath = extensionPath;
   }
 
-  getTreeItem(element): vscode.TreeItem {
+  getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
     return element;
   }
 
@@ -71,7 +71,7 @@ class RecordActionItem extends vscode.TreeItem {
     };
     this.tooltip = 'Record Codio to Project';
     this.command = {
-      command: RECORD_CODIO_TO_PROJECT,
+      command: CommandNames.RECORD_CODIO_TO_PROJECT,
       title: '',
     };
   }
@@ -87,7 +87,11 @@ class CodioItem extends vscode.TreeItem {
       dark: join(extensionPath, 'media/dark/icon-small.svg'),
       light: join(extensionPath, 'media/light/icon-small.svg'),
     };
-    this.command = { command: PLAY_CODIO, title: 'Play Codio', arguments: [codio.uri, codio.workspaceRoot] };
+    this.command = {
+      command: CommandNames.PLAY_CODIO,
+      title: 'Play Codio',
+      arguments: [codio.uri, codio.workspaceRoot],
+    };
     this.description = this.getTimeDescription(codio.length);
     this.tooltip = this.getMsTooltip(codio.length);
     this.contextValue = 'codio';
@@ -114,9 +118,10 @@ class CodioItem extends vscode.TreeItem {
       style: 'unit',
       // error TS2345 - NumberFormat does not have unit and unitDisplay properties.
       // https://github.com/microsoft/TypeScript/issues/38012
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       unit: 'millisecond',
-      unitDisplay: 'narrow'
+      unitDisplay: 'narrow',
     }).format(ms);
   }
 }

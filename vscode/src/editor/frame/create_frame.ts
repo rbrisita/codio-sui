@@ -18,7 +18,7 @@ function initialFrametoDocumentsByPath(initialFrame: Array<CodioFile>) {
 function getInitialFileFromInitialFrame(initialFrame: CodioFrame): CodioFile {
   return initialFrame[INITIAL_FILE_INDEX];
 }
-export function getInitialFilePathAndContentFromFrame(initialFrame: CodioFrame) {
+export function getInitialFilePathAndContentFromFrame(initialFrame: CodioFrame): Record<string, unknown> {
   const { document, uri } = getInitialFileFromInitialFrame(initialFrame);
   return { content: document.text, uri };
 }

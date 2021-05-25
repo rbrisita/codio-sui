@@ -8,7 +8,7 @@ import { join } from 'path';
 import { v4 as uuid } from 'uuid';
 import { getWorkspaceRootAndCodiosFolder } from './workspace';
 
-const homedir = require('os').homedir();
+const homedir = os.homedir();
 const userOS = os.platform();
 const onCodiosChangedSubscribers = [];
 const EXTENSION_FOLDER = userOS === 'darwin' ? join(homedir, 'Library', 'codio') : join(homedir, 'codio');
@@ -21,11 +21,11 @@ const CODIO_WORKSPACE_FOLDER = 'workspace';
 export default class FSManager {
   tempFolder: string;
 
-  onCodiosChanged(func: Function) {
+  onCodiosChanged(func: () => unknown): void {
     onCodiosChangedSubscribers.push(func);
   }
 
-  codioPath(codioId) {
+  codioPath(codioId: string): string {
     return join(codiosFolder, codioId);
   }
 
@@ -33,7 +33,7 @@ export default class FSManager {
     this.tempFolder = os.tmpdir();
   }
 
-  static async saveFile(path, content) {
+  static async saveFile(path: number | fs.PathLike, content: unknown): Promise<void> {
     try {
       await writeFile(path, content);
       console.log('The file was saved!', path);
@@ -42,11 +42,11 @@ export default class FSManager {
     }
   }
 
-  static timelinePath(codioPath) {
+  static timelinePath(codioPath: string): string {
     return join(codioPath, 'codio.json');
   }
 
-  static audioPath(codioPath) {
+  static audioPath(codioPath: string): string {
     return join(codioPath, 'audio.mp3');
   }
 
@@ -54,21 +54,21 @@ export default class FSManager {
    * Return the path to the subtitles file.
    * @param codioPath Path to unzipped codio.
    */
-  static subtitlesPath(codioPath): string {
+  static subtitlesPath(codioPath: string): string {
     return join(codioPath, 'subtitles.srt');
   }
 
-  static workspacePath(codioPath) {
+  static workspacePath(codioPath: string): string {
     return join(codioPath, 'workspace');
   }
 
-  static async loadTimeline(codioPath) {
+  static async loadTimeline(codioPath: string): Promise<Record<string, unknown>> {
     const timelineContent = await readFile(this.timelinePath(codioPath));
     const parsedTimeline = JSON.parse(timelineContent.toString());
     return parsedTimeline;
   }
 
-  static toRelativePath(uri: vscode.Uri, rootPath: string) {
+  static toRelativePath(uri: vscode.Uri, rootPath: string): string {
     const pathSplit = uri.path.split(uriSeperator);
     const rootPathSplit = rootPath.split(uriSeperator);
     const relativePath = pathSplit.slice(rootPathSplit.length).join(uriSeperator);
@@ -76,12 +76,12 @@ export default class FSManager {
   }
 
   static async saveRecordingToFile(
-    codioContent: Object,
-    metaData: Object,
+    codioContent: Record<string, unknown>,
+    metaData: Record<string, unknown>,
     files: Array<string>,
     codioPath: string,
     destinationFolder?: vscode.Uri,
-  ) {
+  ): Promise<void> {
     const codioContentJson = JSON.stringify(codioContent);
     const metaDataJson = JSON.stringify(metaData);
     await this.saveFile(join(codioPath, CODIO_CONTENT_FILE), codioContentJson);
@@ -126,15 +126,15 @@ export default class FSManager {
     }
   }
 
-  static toFullPath(codioPath, filePath) {
+  static toFullPath(codioPath: string, filePath: string): string {
     return join(codioPath, filePath);
   }
 
-  async folderNameExists(folderName): Promise<boolean> {
+  async folderNameExists(folderName: string): Promise<boolean> {
     return await exists(join(EXTENSION_FOLDER, folderName));
   }
 
-  async createExtensionFolders() {
+  async createExtensionFolders(): Promise<void> {
     try {
       const extensionFolderExists = await exists(EXTENSION_FOLDER);
       if (!extensionFolderExists) {
@@ -149,7 +149,7 @@ export default class FSManager {
     }
   }
 
-  async createCodioFolder(folderName) {
+  async createCodioFolder(folderName: string): Promise<string> {
     try {
       const path = join(codiosFolder, folderName);
       await mkdir(path);
@@ -159,7 +159,7 @@ export default class FSManager {
     }
   }
 
-  async createTempCodioFolder(codioId) {
+  async createTempCodioFolder(codioId: string): Promise<string> {
     try {
       const path = join(this.tempFolder, codioId);
       await mkdir(path);
@@ -169,7 +169,7 @@ export default class FSManager {
     }
   }
 
-  getCodioUnzipped(uri: vscode.Uri) {
+  getCodioUnzipped(uri: vscode.Uri): string | Promise<unknown> {
     if (fs.lstatSync(uri.fsPath).isDirectory()) {
       return uri.fsPath;
     } else {
@@ -177,10 +177,10 @@ export default class FSManager {
     }
   }
 
-  static async zip(srcPath, distPath) {
+  static async zip(srcPath: string, distPath: string): Promise<string> {
     try {
       if (isWindows) {
-        await new Promise((res, rej) => zip(srcPath, distPath, (error: Error) => (error ? rej(error) : res())));
+        await new Promise((res, rej) => zip(srcPath, distPath, (error: Error) => (error ? rej(error) : res(''))));
       } else {
         await promiseExec(`cd ${srcPath} && zip -r ${distPath} .`);
       }
@@ -190,20 +190,20 @@ export default class FSManager {
     }
   }
 
-  async unzipCodio(srcPath) {
-    const uuid = require('uuid');
-    const codioId = uuid.v4();
-    const codioTempFolder = join(this.tempFolder, codioId);
+  async unzipCodio(srcPath: string): Promise<unknown> {
+    const codioTempFolder = join(this.tempFolder, uuid());
     try {
       // await promiseExec(`unzip ${srcPath} -d ${codioTempFolder}`);
-      await new Promise((res, rej) => unzip(srcPath, codioTempFolder, (error: Error) => (error ? rej(error) : res())));
+      await new Promise((res, rej) =>
+        unzip(srcPath, codioTempFolder, (error: Error) => (error ? rej(error) : res(''))),
+      );
       return codioTempFolder;
     } catch (e) {
       console.log(`unzipping codio with path: ${srcPath} failed`, e);
     }
   }
 
-  async deleteFilesInCodio(codioId) {
+  async deleteFilesInCodio(codioId: string): Promise<string> {
     const path = join(codiosFolder, codioId);
     const files = await readdir(path);
     // currently I am assuming there won't be directories inside the directory
@@ -211,12 +211,12 @@ export default class FSManager {
     return path;
   }
 
-  async getCodiosUnzippedFromCodioFolder(folder) {
+  async getCodiosUnzippedFromCodioFolder(folder: fs.PathLike): Promise<unknown[]> {
     const folderContents = await readdir(folder);
     return await Promise.all(
       folderContents
         .map((file) => {
-          const fullPath = join(folder, file);
+          const fullPath = join(folder.toString(), file);
           if (fs.statSync(fullPath).isDirectory()) {
             return fullPath;
           } else if (file.endsWith('.codio')) {
@@ -239,11 +239,11 @@ export default class FSManager {
     try {
       const directories = await this.getCodiosUnzippedFromCodioFolder(folder);
       await Promise.all(
-        directories.map(async (dir) => {
+        directories.map(async (dir: string) => {
           codios.push({
             ...(await this.getMetaData(dir)),
             uri: vscode.Uri.file(dir),
-            workspaceRoot
+            workspaceRoot,
           });
         }),
       );
@@ -309,7 +309,7 @@ export default class FSManager {
     }
   }
 
-  async choose(codiosMetadata): Promise<{ path: string; workspaceRoot: vscode.Uri } | undefined> {
+  async choose(codiosMetadata: Array<Codio>): Promise<{ path: string; workspaceRoot: vscode.Uri } | undefined> {
     let unlock;
     let itemSelected;
     const quickPickItems = codiosMetadata.map((item) => ({
