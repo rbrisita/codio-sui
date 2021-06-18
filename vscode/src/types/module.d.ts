@@ -134,6 +134,11 @@ declare interface CodioSerializedChangeActiveEditorEvent {
   };
 }
 
+declare interface IntitialFileContent {
+  content: string;
+  uri: Uri;
+}
+
 declare interface CodioFile {
   document: ShadowDocument;
   column: ViewColumn;
@@ -146,6 +151,12 @@ declare interface CodioSerializedFile {
   column: number;
   path: string;
   lastActionCount: number;
+}
+
+declare interface Timeline {
+  codioLength: number;
+  events: CodioSerializedEvent[];
+  initialFrame: CodioSerializedFile[];
 }
 
 declare type CodioFrame = Array<CodioFile>;

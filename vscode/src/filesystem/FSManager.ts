@@ -62,7 +62,7 @@ export default class FSManager {
     return join(codioPath, 'workspace');
   }
 
-  static async loadTimeline(codioPath: string): Promise<Record<string, unknown>> {
+  static async loadTimeline(codioPath: string): Promise<Timeline> {
     const timelineContent = await readFile(this.timelinePath(codioPath));
     const parsedTimeline = JSON.parse(timelineContent.toString());
     return parsedTimeline;
@@ -169,7 +169,7 @@ export default class FSManager {
     }
   }
 
-  getCodioUnzipped(uri: vscode.Uri): string | Promise<unknown> {
+  getCodioUnzipped(uri: vscode.Uri): string | Promise<string> {
     if (fs.lstatSync(uri.fsPath).isDirectory()) {
       return uri.fsPath;
     } else {
@@ -190,7 +190,7 @@ export default class FSManager {
     }
   }
 
-  async unzipCodio(srcPath: string): Promise<unknown> {
+  async unzipCodio(srcPath: string): Promise<string> {
     const codioTempFolder = join(this.tempFolder, uuid());
     try {
       // await promiseExec(`unzip ${srcPath} -d ${codioTempFolder}`);

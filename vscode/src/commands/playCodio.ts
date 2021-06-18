@@ -11,7 +11,7 @@ export default async function playCodio(
   recorder: Recorder,
   codioUri?: Uri,
   workspaceUri?: Uri,
-) {
+): Promise<void> {
   if (isTreeItem(codioUri)) {
     codioUri = codioUri['command']?.arguments[0];
   }
@@ -45,7 +45,7 @@ export default async function playCodio(
   }
 }
 
-async function loadAndPlay(player: Player, path, workspacePath) {
+async function loadAndPlay(player: Player, path: string, workspacePath: string) {
   await player.loadCodio(path, workspacePath);
   await player.startCodio();
   UI.showPlayerStatusBar(player);

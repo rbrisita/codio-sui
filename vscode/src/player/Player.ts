@@ -5,8 +5,8 @@ import { commands, Disposable, TextEditorSelectionChangeEvent, window } from 'vs
 import AudioHandler from '../audio/Audio';
 import Subtitles from './Subtitles';
 
-const IS_PLAYING = "isPlaying";
-const IN_CODIO_SESSION = "inCodioSession";
+const IS_PLAYING = 'isPlaying';
+const IN_CODIO_SESSION = 'inCodioSession';
 
 export default class Player {
   isPlaying = false;
@@ -22,8 +22,8 @@ export default class Player {
   subtitlesPlayer: Subtitles;
   timer: Timer;
 
-  closeCodioResolver: any;
-  process: any;
+  closeCodioResolver: (value?: unknown) => void;
+  process: Promise<unknown>;
   onPauseHandler: Disposable;
 
   /**
@@ -31,7 +31,7 @@ export default class Player {
    * @param codioPath Path where codio was unzipped to access files.
    * @param workspaceToPlayOn Path of the current workspace.
    */
-  async loadCodio(codioPath, workspaceToPlayOn?: string) {
+  async loadCodio(codioPath: string, workspaceToPlayOn?: string): Promise<void> {
     try {
       this.setInitialState();
       this.codioPath = codioPath;
@@ -41,7 +41,7 @@ export default class Player {
       this.codeEditorPlayer = new CodeEditorPlayer();
       let loaded = this.codeEditorPlayer.load(
         workspaceToPlayOn ? workspaceToPlayOn : FSManager.workspacePath(this.codioPath),
-        timeline
+        timeline,
       );
       if (!loaded) {
         this.codeEditorPlayer.destroy();
@@ -62,7 +62,7 @@ export default class Player {
     }
   }
 
-  setInitialState() {
+  setInitialState(): void {
     this.relativeActiveTime = 0;
     this.lastStoppedTime = 0;
     this.codioStartTime = undefined;
@@ -71,7 +71,7 @@ export default class Player {
     this.process = undefined;
   }
 
-  async startCodio() {
+  async startCodio(): Promise<void> {
     this.process = new Promise((resolve) => (this.closeCodioResolver = resolve));
     await this.codeEditorPlayer.moveToFrame(0);
     this.play(this.codeEditorPlayer.events, this.relativeActiveTime);
@@ -83,7 +83,7 @@ export default class Player {
    * @param context String representing context to update.
    * @param value Value to set given context string to.
    */
-  private updateContext(context: string, value: any): void {
+  private updateContext(context: string, value: unknown): void {
     commands.executeCommand('setContext', context, value);
   }
 
@@ -92,7 +92,7 @@ export default class Player {
    * @param actions An array of action objects for the CodeEditorPlayer to parse.
    * @param timeToStart Seconds to start playing media from.
    */
-  play(actions: Array<any>, timeToStart: number): void {
+  play(actions: CodioEvent[], timeToStart: number): void {
     if (this.isPlaying) {
       this.pauseMedia();
     }
@@ -147,12 +147,12 @@ export default class Player {
     this.updateContext(IS_PLAYING, this.isPlaying);
   }
 
-  resume() {
+  resume(): void {
     this.playFrom(this.relativeActiveTime);
   }
 
   //@TODO: should closeCodio just call pause? sometime it is called with pause before and sometime it doesn't. Probably a mistake
-  closeCodio() {
+  closeCodio(): void {
     this.timer.stop();
     this.audioPlayer.pause();
     this.subtitlesPlayer.stop();
@@ -161,11 +161,11 @@ export default class Player {
     this.onPauseHandler?.dispose();
   }
 
-  onTimerUpdate(observer) {
+  onTimerUpdate(observer: (currentSecond: number, totalSeconds: number) => void): void {
     this.timer.onUpdate(observer);
   }
 
-  rewind(s) {
+  rewind(s: number): void {
     if (this.isPlaying) {
       this.pause();
     }
@@ -176,7 +176,7 @@ export default class Player {
     this.playFrom(timeToRewind);
   }
 
-  forward(s) {
+  forward(s: number): void {
     if (this.isPlaying) {
       this.pause();
     }
@@ -187,7 +187,7 @@ export default class Player {
     this.playFrom(timeToForward);
   }
 
-  async playFrom(relativeTimeToStart: number) {
+  async playFrom(relativeTimeToStart: number): Promise<void> {
     try {
       if (this.isPlaying) {
         this.pauseMedia();
