@@ -10,7 +10,7 @@ function createEventWithModifiedTime(event: CodioEvent, newTime: number): CodioE
   };
 }
 
-export function createRelativeTimeline(events: Array<CodioEvent>, startTime: number): Array<any> {
+export function createRelativeTimeline(events: Array<CodioEvent>, startTime: number): Array<CodioEvent> {
   return events.map((event) => {
     const newTime = event.data.time - startTime;
     return createEventWithModifiedTime(event, newTime);
@@ -35,13 +35,16 @@ export function createTimelineWithAbsoluteTimes(
   });
 }
 
-export function runThroughTimeline(timeline: Array<CodioEvent> = [], setCurrentActionTimer: Function) {
+export function runThroughTimeline(
+  timeline: Array<CodioEvent> = [],
+  setCurrentActionTimer: (...args: unknown[]) => void,
+): void {
   if (!timeline.length) {
     return;
   }
   try {
     const event = timeline[0];
-    let sleepTime = event.data.time - Date.now();
+    const sleepTime = event.data.time - Date.now();
     setCurrentActionTimer(
       setTimeout(async () => {
         await dispatchEvent(event);

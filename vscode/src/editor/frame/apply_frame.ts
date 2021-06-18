@@ -1,8 +1,8 @@
 import { asyncForEach, overrideEditorText } from '../../utils';
 import { TextEditor, window, commands } from 'vscode';
 
-export async function applyFrame(frame: CodioFrame) {
-  await asyncForEach(frame, async (file) => {
+export async function applyFrame(frame: CodioFrame): Promise<void> {
+  await asyncForEach(frame, async (file: CodioFile) => {
     const textEditor: TextEditor = window.visibleTextEditors.find(
       (editor) => editor.document.uri.path === file.uri.path,
     );

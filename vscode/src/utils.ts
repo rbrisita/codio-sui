@@ -53,6 +53,11 @@ export function nthIndex(str: string, pat: string, n: number): number {
   return i;
 }
 
+/**
+ * After each interation wait for callback to return to continue.
+ * @param array Array to iterate through and pass to callback.
+ * @param callback Callback to wait on.
+ */
 export async function asyncForEach(
   array: Array<unknown>,
   callback: (elem: unknown, i: number, arr: Array<unknown>) => unknown,

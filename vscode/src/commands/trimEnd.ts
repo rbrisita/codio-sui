@@ -51,7 +51,7 @@ function trimMetaFile(codioPath: string, end: number) {
   fs.writeFileSync(jsonPath, JSON.stringify(json), 'utf8');
 }
 
-export default async function trimEnd(player: Player) {
+export default async function trimEnd(player: Player): Promise<void> {
   console.log(player);
   try {
     const hasFfmpeg = await checkForFfmpeg();

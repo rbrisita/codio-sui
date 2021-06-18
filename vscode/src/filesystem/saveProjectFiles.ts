@@ -2,7 +2,7 @@ import FSManager from './FSManager';
 import { asyncForEach, uriSeperator } from '../utils';
 import { join } from 'path';
 
-export async function saveProjectFiles(codioWorkspacePath, files: Array<string>) {
+export async function saveProjectFiles(codioWorkspacePath: string, files: Array<string>): Promise<void> {
   try {
     await saveFolderIfDoesNotExist(codioWorkspacePath);
     const filesWithSplittedPath: Array<string[]> = files.map((file) => file.split(uriSeperator));
@@ -31,9 +31,9 @@ export function reduceToRoot(files: string[][], rootPath = uriSeperator): { file
 }
 
 async function saveFiles(root: string, filesWithSplittedPath: string[][]) {
-  await asyncForEach(filesWithSplittedPath, async (filePathSplitted) => {
+  await asyncForEach(filesWithSplittedPath, async (filePathSplitted: string[]) => {
     let currentFolder = root;
-    await asyncForEach(filePathSplitted, async (partOfPath, idx) => {
+    await asyncForEach(filePathSplitted, async (partOfPath: string, idx) => {
       if (idx === filePathSplitted.length - 1) {
         await FSManager.saveFile(join(currentFolder, filePathSplitted[idx]), '');
       } else {
@@ -45,7 +45,7 @@ async function saveFiles(root: string, filesWithSplittedPath: string[][]) {
 }
 
 const fs = require('fs').promises;
-export async function ensureDir(dirpath) {
+export async function ensureDir(dirpath: string): Promise<void> {
   try {
     await fs.mkdir(dirpath);
   } catch (err) {

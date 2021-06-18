@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.7.0",
+    "version": "0.7.1",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -163,52 +163,52 @@
         "menus": {
             "commandPalette": [
                 {
-                  "command": "codio.playFrom",
-                  "when": "!inCodioRecording"
+                    "command": "codio.playFrom",
+                    "when": "!inCodioRecording"
                 },
                 {
-                  "command": "codio.playCodio",
-                  "when": "!inCodioRecording && !inCodioSession && !isPlaying"
+                    "command": "codio.playCodio",
+                    "when": "!inCodioRecording && !inCodioSession && !isPlaying"
                 },
                 {
-                  "command": "codio.stopCodio",
-                  "when": "!inCodioRecording && inCodioSession && isPlaying"
+                    "command": "codio.stopCodio",
+                    "when": "!inCodioRecording && inCodioSession && isPlaying"
                 },
                 {
-                  "command": "codio.pauseCodio",
-                  "when": "!inCodioRecording && inCodioSession && isPlaying"
+                    "command": "codio.pauseCodio",
+                    "when": "!inCodioRecording && inCodioSession && isPlaying"
                 },
                 {
-                  "command": "codio.resumeCodio",
-                  "when": "!inCodioRecording && inCodioSession && !isPlaying"
+                    "command": "codio.resumeCodio",
+                    "when": "!inCodioRecording && inCodioSession && !isPlaying"
                 },
                 {
-                  "command": "codio.pauseOrResume",
-                  "when": "!inCodioRecording && inCodioSession"
+                    "command": "codio.pauseOrResume",
+                    "when": "!inCodioRecording && inCodioSession"
                 },
                 {
-                  "command": "codio.forward",
-                  "when": "!inCodioRecording && inCodioSession"
+                    "command": "codio.forward",
+                    "when": "!inCodioRecording && inCodioSession"
                 },
                 {
-                  "command": "codio.rewind",
-                  "when": "!inCodioRecording && inCodioSession"
+                    "command": "codio.rewind",
+                    "when": "!inCodioRecording && inCodioSession"
                 },
                 {
-                  "command": "codio.recordCodio",
-                  "when": "!inCodioRecording && !inCodioSession"
+                    "command": "codio.recordCodio",
+                    "when": "!inCodioRecording && !inCodioSession"
                 },
                 {
-                  "command": "codio.recordCodioToProject",
-                  "when": "!inCodioRecording && !inCodioSession"
+                    "command": "codio.recordCodioToProject",
+                    "when": "!inCodioRecording && !inCodioSession"
                 },
                 {
-                  "command": "codio.saveRecording",
-                  "when": "inCodioRecording && !inCodioSession"
+                    "command": "codio.saveRecording",
+                    "when": "inCodioRecording && !inCodioSession"
                 },
                 {
-                  "command": "codio.cancelRecording",
-                  "when": "inCodioRecording && !inCodioSession"
+                    "command": "codio.cancelRecording",
+                    "when": "inCodioRecording && !inCodioSession"
                 }
             ],
             "view/item/context": [
@@ -272,7 +272,9 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "rm -rf out && rm -f codio-*.vsix && npm run -S esbuild-base -- --minify",
+        "vscode:prepublish": "rm -rf out && rm -f codio-*.vsix && webpack --mode production",
+        "webpack": "webpack --mode development",
+        "webpack-dev": "webpack --mode development --watch",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run -S esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run -S esbuild-base -- --sourcemap --watch",
@@ -294,9 +296,12 @@
         "eslint-plugin-prettier": "^3.1.4",
         "mocha": "^8.3.0",
         "prettier": "^2.0.5",
+        "ts-loader": "^9.2.3",
         "tslint": "^5.8.0",
         "typescript": "^3.9.5",
-        "vscode-test": "^1.5.1"
+        "vscode-test": "^1.5.1",
+        "webpack": "^5.39.1",
+        "webpack-cli": "^4.7.2"
     },
     "dependencies": {
         "cross-zip": "^3.0.0",
