@@ -1,6 +1,7 @@
 import { ChildProcess, exec, spawn } from 'child_process';
 import { getDeviceList } from './ffmpegDeviceListParser';
-import { isWindows, isMacOs } from '../utils';
+import { isWindows, isMacOs, findPID, getExtensionPath } from '../utils';
+import { sep } from 'path';
 
 /**
  * Possible audio process states.
@@ -9,10 +10,12 @@ enum State {
   NONE,
   PLAYING,
   RECORDING,
+  PAUSE,
 }
 
 export default class AudioHandler {
   audioFilePath: string;
+  private processPID: number;
   private currentAudioProcess: ChildProcess;
   private audioInputDevice: string;
   private state: State;
@@ -23,11 +26,11 @@ export default class AudioHandler {
 
   async setDevice(prompt: (items: string[]) => Promise<string | undefined>): Promise<boolean> {
     if (isWindows || isMacOs) {
-      const deviceList: any = await getDeviceList();
-      const audioDevices = deviceList?.audioDevices;
-      if (audioDevices?.length) {
+      const deviceList: DeviceList = await getDeviceList();
+      const audioDevices: Device[] = deviceList.audioDevices;
+      if (audioDevices.length) {
         if (audioDevices.length > 1) {
-          const deviceName = await prompt(audioDevices.map((device) => device.name));
+          const deviceName = await prompt(audioDevices.map((device: Device) => device.name));
           if (deviceName) {
             this.audioInputDevice = deviceName;
           }
@@ -43,16 +46,36 @@ export default class AudioHandler {
     }
   }
 
-  async record() {
+  async record(): Promise<void> {
     if (isWindows) {
-      this.currentAudioProcess = exec(`ffmpeg -f dshow -i audio="${this.audioInputDevice}"  ${this.audioFilePath}`);
+      this.currentAudioProcess = spawn(
+        'ffmpeg',
+        [
+          '-hide_banner',
+          '-nostats',
+          '-loglevel',
+          'error',
+          '-f',
+          'dshow',
+          '-i',
+          `audio="${this.audioInputDevice}"`,
+          '-y',
+          this.audioFilePath,
+        ],
+        { shell: 'powershell.exe' }, // Using powershell will result in one instance to handle
+      );
+      try {
+        this.processPID = await findPID('ffmpeg.exe');
+      } catch (error) {
+        console.log('Audio record', error);
+      }
     } else {
       this.currentAudioProcess = exec(`ffmpeg -f avfoundation -i :"${this.audioInputDevice}" ${this.audioFilePath}`);
     }
     this.state = State.RECORDING;
   }
 
-  async stopRecording() {
+  async stopRecording(): Promise<string | void> {
     return this.stopAudioProcess();
   }
 
@@ -60,20 +83,61 @@ export default class AudioHandler {
    * Play audio file with no visuals and exit when done.
    * @param time Time in seconds to seek into audio file.
    */
-  play(time) {
+  play(time: number): void {
     this.currentAudioProcess = exec(`ffplay -hide_banner -nodisp -nostats -autoexit -ss ${time} ${this.audioFilePath}`);
     this.state = State.PLAYING;
   }
 
-  async pause() {
-    return this.stopAudioProcess();
+  /**
+   * Pause when playing or recording audio.
+   * @returns Void
+   */
+  async pause(): Promise<void> {
+    if (!this.state || this.state === State.PAUSE) {
+      return;
+    }
+
+    if (this.state === State.PLAYING) {
+      await this.stopAudioProcess();
+      return;
+    }
+
+    if (isWindows) {
+      const { suspend } = await import(`..${sep}..${sep}dependencies${sep}win${sep}win32-${process.arch}_lib.node`);
+      suspend(this.processPID);
+    } else {
+      this.currentAudioProcess.kill('SIGSTOP');
+    }
+
+    this.state = State.PAUSE;
+  }
+
+  /**
+   * Resume audio recording process.
+   * @returns Void
+   */
+  async resume(): Promise<void> {
+    if (this.state !== State.PAUSE) {
+      return;
+    }
+
+    if (isWindows) {
+      const { resume } = await import(`..${sep}..${sep}dependencies${sep}win${sep}win32-${process.arch}_lib.node`);
+      resume(this.processPID);
+    } else {
+      this.currentAudioProcess.kill('SIGCONT');
+    }
+
+    this.state = State.RECORDING;
   }
 
   /**
    * Stop audio process in regards to OS.
    */
-  private stopAudioProcess() {
+  private stopAudioProcess(): Promise<string | void> {
     const proc = this.currentAudioProcess;
+    // TODO: might crash because pause and stop are called in recorder
+    // check proc.killed if so
     if (isWindows) {
       if (this.isRecording()) {
         // Kill if VS Code process exits before audio process

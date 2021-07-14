@@ -6,12 +6,16 @@ import { registerTreeViews } from './user_interface/Viewers';
 import FSManager from './filesystem/FSManager';
 import { codioCommands, CommandNames } from './commands';
 import { getWorkspaceUriAndCodioDestinationUri } from './filesystem/workspace';
+import { checkDependencies, saveExtensionPath } from './utils';
 
 const fsManager = new FSManager();
 const player = new Player();
 const recorder = new Recorder();
 
 export async function activate(context: ExtensionContext): Promise<void> {
+  saveExtensionPath(context.extensionPath);
+  await checkDependencies();
+
   await fsManager.createExtensionFolders();
   UI.shouldDisplayMessages = true;
   UI.createStatusBar(context);
@@ -33,6 +37,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const saveRecordingDisposable = commands.registerCommand(CommandNames.SAVE_RECORDING, () => {
     codioCommands.saveRecording(recorder);
+  });
+
+  const pauseRecordingDisposable = commands.registerCommand(CommandNames.PAUSE_RECORDING, () => {
+    codioCommands.pauseRecording(recorder);
+  });
+
+  const resumeRecordingDisposable = commands.registerCommand(CommandNames.RESUME_RECORDING, () => {
+    codioCommands.resumeRecording(recorder);
   });
 
   const cancelRecordingDisposable = commands.registerCommand(CommandNames.CANCEL_RECORDING, () => {
@@ -87,6 +99,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   context.subscriptions.push(recordCodioDisposable);
   context.subscriptions.push(saveRecordingDisposable);
+  context.subscriptions.push(pauseRecordingDisposable);
+  context.subscriptions.push(resumeRecordingDisposable);
   context.subscriptions.push(cancelRecordingDisposable);
   context.subscriptions.push(recordCodioToProjectDisposable);
   context.subscriptions.push(playCodioDisposable);
@@ -102,6 +116,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 export function deactivate(): void {
-  player.closeCodio();
+  player.stop();
   recorder.stopRecording();
 }

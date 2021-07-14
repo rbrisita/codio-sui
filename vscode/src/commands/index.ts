@@ -5,6 +5,8 @@ import playFrom from './playFrom';
 import { forward, rewind } from './rewindAndForward';
 import resumeCodio from './resumeCodio';
 import pauseCodio from './pauseCodio';
+import pauseRecording from './pauseRecording';
+import resumeRecording from './resumeRecording';
 import saveRecording from './saveRecording';
 import recordCodio from './recordCodio';
 import cancelRecording from './cancelRecording';
@@ -20,6 +22,8 @@ export const codioCommands = {
   resumeCodio,
   pauseCodio,
   cancelRecording,
+  pauseRecording,
+  resumeRecording,
   saveRecording,
   recordCodio,
   trimEnd,
@@ -31,6 +35,8 @@ export class CommandNames {
   public static readonly STOP_CODIO = 'codio.stopCodio';
   public static readonly RECORD_CODIO = 'codio.recordCodio';
   public static readonly SAVE_RECORDING = 'codio.saveRecording';
+  public static readonly PAUSE_RECORDING = 'codio.pauseRecording';
+  public static readonly RESUME_RECORDING = 'codio.resumeRecording';
   public static readonly CANCEL_RECORDING = 'codio.cancelRecording';
   public static readonly PAUSE_CODIO = 'codio.pauseCodio';
   public static readonly RESUME_CODIO = 'codio.resumeCodio';
