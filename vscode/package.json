@@ -16,7 +16,7 @@
     "bugs": {
         "url": "https://github.com/rbrisita/codio-sui/projects/2"
     },
-    "version": "0.7.1",
+    "version": "0.8.0",
     "license": "MIT",
     "publisher": "rbrisita",
     "icon": "media/icon.png",
@@ -37,6 +37,8 @@
         "onCommand:codio.recordCodio",
         "onCommand:codio.recordCodioToProject",
         "onCommand:codio.saveRecording",
+        "onCommand:codio.pauseRecording",
+        "onCommand:codio.resumeRecording",
         "onCommand:codio.cancelRecording",
         "onCommand:codio.trimEnd",
         "onCommand:codio.playCodio",
@@ -81,6 +83,21 @@
                 "category": "Codio",
                 "title": "Save Recording",
                 "icon": "$(save)"
+            },
+            {
+                "command": "codio.pauseRecording",
+                "category": "Codio",
+                "title": "Pause Recording",
+                "icon": {
+                    "light": "./media/light/circle_pause.svg",
+                    "dark": "./media/dark/circle_pause.svg"
+                }
+            },
+            {
+                "command": "codio.resumeRecording",
+                "category": "Codio",
+                "title": "Resume Recording",
+                "icon": "$(record)"
             },
             {
                 "command": "codio.cancelRecording",
@@ -207,6 +224,14 @@
                     "when": "inCodioRecording && !inCodioSession"
                 },
                 {
+                    "command": "codio.pauseRecording",
+                    "when": "inCodioRecording && !isCodioRecordingPaused && !inCodioSession"
+                },
+                {
+                    "command": "codio.resumeRecording",
+                    "when": "inCodioRecording && isCodioRecordingPaused && !inCodioSession"
+                },
+                {
                     "command": "codio.cancelRecording",
                     "when": "inCodioRecording && !inCodioSession"
                 }
@@ -230,9 +255,19 @@
                     "group": "navigation@1"
                 },
                 {
+                    "command": "codio.pauseRecording",
+                    "when": "inCodioRecording && !isCodioRecordingPaused && !inCodioSession && view == codioMessages",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "codio.resumeRecording",
+                    "when": "inCodioRecording && isCodioRecordingPaused && !inCodioSession && view == codioMessages",
+                    "group": "navigation@2"
+                },
+                {
                     "command": "codio.cancelRecording",
                     "when": "inCodioRecording && !inCodioSession && view == codioMessages",
-                    "group": "navigation@2"
+                    "group": "navigation@3"
                 },
                 {
                     "command": "codio.rewind",
@@ -272,7 +307,7 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "rm -rf out && rm -f codio-*.vsix && webpack --mode production",
+        "vscode:prepublish": "rm -rf out && rm -f codio-*.vsix && npm run compile",
         "webpack": "webpack --mode development",
         "webpack-dev": "webpack --mode development --watch",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",

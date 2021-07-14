@@ -2,15 +2,23 @@
 const exec = require('child_process').exec;
 const platform = process.platform;
 
-function getDeviceList(options: { ffmpegPath?: string } = {}, callback?: Function) {
+// TODO: Refactor for readability and management.
+function getDeviceList(
+  options: { ffmpegPath?: string } = {},
+  callback?: (value: unknown) => void,
+): Promise<DeviceList> {
   if (typeof options === 'function') {
     callback = options;
     options = null;
   }
   const ffmpegPath = options?.ffmpegPath || 'ffmpeg';
-  const callbackExists = typeof callback === 'function';
 
-  let inputDevice, prefix, audioSeparator, alternativeName, deviceParams;
+  // Set parsers.
+  let inputDevice: string;
+  let prefix: RegExp;
+  let audioSeparator: RegExp;
+  let alternativeName: RegExp;
+  let deviceParams: RegExp;
   switch (platform) {
     case 'win32':
       inputDevice = 'dshow';
@@ -27,33 +35,41 @@ function getDeviceList(options: { ffmpegPath?: string } = {}, callback?: Functio
       break;
   }
 
-  const searchPrefix = (line) => line.search(prefix) > -1;
-  const searchAudioSeparator = (line) => isVideo && line.search(audioSeparator) > -1;
-  const searchAlternativeName = (line) => platform === 'win32' && line.search(/Alternative\sname/) > -1;
+  const searchPrefix = (line: string) => line.search(prefix) > -1;
+  const searchAudioSeparator = (line: string) => isVideo && line.search(audioSeparator) > -1;
+  const searchAlternativeName = (line: string) => platform === 'win32' && line.search(/Alternative\sname/) > -1;
 
-  const videoDevices = [];
-  const audioDevices = [];
+  const videoDevices: Device[] = [];
+  const audioDevices: Device[] = [];
   let isVideo = true;
 
-  const execute = (fulfill?: Function) => {
+  // Parse
+  const execute = (fulfill?: (value: unknown) => void) => {
     exec(`${ffmpegPath} -f ${inputDevice} -list_devices true -i ""`, (err, stdout, stderr) => {
       stderr
         .split('\n')
         .filter(searchPrefix)
-        .forEach((line) => {
+        .forEach((line: string) => {
           const deviceList = isVideo ? videoDevices : audioDevices;
+
+          // Check for when audio devices are encountered.
           if (searchAudioSeparator(line)) {
             isVideo = false;
             return;
           }
+
+          // Check for when alternative name is reached on Windows
+          // and set last device found alternativeName to it.
           if (searchAlternativeName(line)) {
             const lastDevice = deviceList[deviceList.length - 1];
             lastDevice.alternativeName = line.match(alternativeName)[1];
             return;
           }
+
+          // Get device parameters.
           const params = line.match(deviceParams);
           if (params) {
-            let device;
+            let device: Device;
             switch (platform) {
               case 'win32':
                 device = {
@@ -67,22 +83,19 @@ function getDeviceList(options: { ffmpegPath?: string } = {}, callback?: Functio
                 };
                 break;
             }
+
             deviceList.push(device);
           }
         });
-      const result = { videoDevices, audioDevices };
-      if (callbackExists) {
-        callback(result);
-      } else {
-        fulfill(result);
-      }
+
+      fulfill({ videoDevices, audioDevices });
     });
   };
 
-  if (callbackExists) {
-    execute();
+  if (typeof callback === 'function') {
+    execute(callback);
   } else {
-    return new Promise(execute);
+    return new Promise(execute) as Promise<DeviceList>;
   }
 }
 

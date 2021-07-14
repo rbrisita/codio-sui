@@ -13,6 +13,11 @@ export default class CodioProgressTimer {
     this.codioLength = codioLength;
   }
 
+  setInitialState(): void {
+    this.onUpdateObservers = [];
+    this.onFinishObservers = [];
+  }
+
   /**
    * Add given observer to be notified when timer finished.
    * @param observer Function to be executed when timer finishes.
@@ -31,6 +36,7 @@ export default class CodioProgressTimer {
 
   stop(): void {
     clearInterval(this.timer);
+    this.timer = null;
   }
 
   /**
@@ -40,17 +46,18 @@ export default class CodioProgressTimer {
   run(codioTime = 0): void {
     try {
       if (this.timer) {
-        clearInterval(this.timer);
+        this.stop();
       }
 
       this.currentSecond = codioTime;
       this.timer = setInterval(() => {
         this.currentSecond++;
+        // console.log('ProgressTimers run setInterval', this.currentSecond);
 
         if (this.codioLength && this.currentSecond > this.codioLength / 1000) {
-          this.onFinishObservers.forEach((observer) => observer());
-          clearInterval(this.timer);
           this.onUpdateObservers.forEach((observer) => observer(this.codioLength / 1000, this.codioLength / 1000));
+          this.onFinishObservers.forEach((observer) => observer());
+          this.stop();
         } else {
           this.onUpdateObservers.forEach((observer) => observer(this.currentSecond, this.codioLength / 1000));
         }

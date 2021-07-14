@@ -11,7 +11,6 @@ import {
 import serializeEvents from '../editor/serialize';
 import * as eventCreators from '../editor/event_creator';
 import FSManager from '../filesystem/FSManager';
-import { exec } from 'child_process';
 import { createRelativeTimeline } from '../editor/event_timeline';
 import ShadowDocument from '../editor/frame/ShadowDocument';
 import serializeFrame from '../editor/frame/serialize_frame';
@@ -23,26 +22,26 @@ export default class CodeEditorRecorder {
   onDidChangeTextEditorVisibleRangesListener: Disposable;
 
   initialFrame: Array<CodioFile> = [];
-  codioEditors: Array<any> = [];
-  records: Array<any> = [];
+  codioEditors: Array<string> = [];
+  records: Array<CodioEvent> = [];
 
   /**
    * Save active text editor and listen to change events.
    */
-  record() {
+  record(): void {
     const editor = window.activeTextEditor;
     if (editor) {
       this.addCodioFileToInitialFrame(new ShadowDocument(editor.document.getText()), 1, editor.document.uri, 0);
-      this.codioEditors = [editor.document.uri.path];
+      this.codioEditors = [...this.codioEditors, editor.document.uri.path];
     }
 
     this.onDidChangeActiveTextEditorListener = window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor);
     this.onDidChangeTextEditorSelectionListener = window.onDidChangeTextEditorSelection(
-      this.onDidChangeTextEditorSelection
+      this.onDidChangeTextEditorSelection,
     );
     this.onDocumentTextChangedListener = workspace.onDidChangeTextDocument(this.onDocumentTextChanged);
     this.onDidChangeTextEditorVisibleRangesListener = window.onDidChangeTextEditorVisibleRanges(
-      this.onDidChangeTextEditorVisibleRanges
+      this.onDidChangeTextEditorVisibleRanges,
     );
   }
 
@@ -55,19 +54,19 @@ export default class CodeEditorRecorder {
     });
   }
 
-  stopRecording() {
+  stopRecording(): void {
     this.onDidChangeActiveTextEditorListener.dispose();
     this.onDidChangeTextEditorSelectionListener.dispose();
     this.onDocumentTextChangedListener.dispose();
     this.onDidChangeTextEditorVisibleRangesListener.dispose();
   }
 
-  getTimelineContent(recordingStartTime, workspaceRoot?: Uri) {
+  getTimelineContent(recordingStartTime: number, workspaceRoot?: Uri): TimelineContent {
     const { files, rootPath } = FSManager.normalizeFilesPath(this.codioEditors, workspaceRoot);
     const events = serializeEvents(this.records, rootPath);
     const initialFrame = serializeFrame(this.initialFrame, rootPath);
     const eventsTimeline = createRelativeTimeline(events, recordingStartTime);
-    // change ctions to events, change codioEditors initialFilePath and initialContent to initialFrame.
+    // change actions to events, change codioEditors initialFilePath and initialContent to initialFrame.
     return { events: eventsTimeline, initialFrame, codioEditors: files };
   }
 
@@ -80,7 +79,7 @@ export default class CodeEditorRecorder {
 
   /**
    * Handle file interactions.
-   * @param te New active text editor with changes. 
+   * @param te New active text editor with changes
    */
   private onDidChangeActiveTextEditor = (te: TextEditor) => {
     // Null when a file replaced another one in the same editor.

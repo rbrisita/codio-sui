@@ -21,6 +21,8 @@ export const showPlayFromInputBox = async (player: Player): Promise<string> => {
 export const MESSAGES = {
   startingToRecord: 'Starting to record.',
   recordingSaved: 'Recording saved.',
+  recordingPaused: 'Recording paused.',
+  recordingResumed: 'Recording resumed.',
   recordingCanceled: 'Recording canceled.',
   cantPlayWhileRecording: "Can't play Codio while recording.",
   alreadyPlaying: 'You already have a Codio playing.',
@@ -71,7 +73,7 @@ class UIController {
    * Show codio player progress on status bar item.
    * @param player Player to get updates from.
    */
-  showPlayerStatusBar(player: Player) {
+  showPlayerStatusBar(player: Player): void {
     this.statusBar.command = CommandNames.STOP_CODIO;
     this.statusBar.tooltip = 'Stop Codio';
     this.statusBar.show();
@@ -84,6 +86,7 @@ class UIController {
     });
 
     player.process.then(() => {
+      this.clearStatusBar();
       this.statusBar.hide();
     });
   }
@@ -92,7 +95,7 @@ class UIController {
    * Show codio recorder progress on status bar item.
    * @param recorder Recorder to get updatess from.
    */
-  showRecorderStatusBar(recorder: Recorder) {
+  showRecorderStatusBar(recorder: Recorder): void {
     this.statusBar.command = CommandNames.SAVE_RECORDING;
     this.statusBar.tooltip = 'Save Recording';
     this.statusBar.show();
@@ -102,8 +105,18 @@ class UIController {
     });
 
     recorder.process.then(() => {
+      this.clearStatusBar();
       this.statusBar.hide();
     });
+  }
+
+  /**
+   * Clear data from statusBar member.
+   */
+  private clearStatusBar(): void {
+    this.statusBar.command = '';
+    this.statusBar.tooltip = '';
+    this.statusBar.text = '';
   }
 }
 

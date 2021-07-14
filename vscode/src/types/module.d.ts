@@ -159,4 +159,21 @@ declare interface Timeline {
   initialFrame: CodioSerializedFile[];
 }
 
+declare interface TimelineContent {
+  codioEditors: sting[];
+  events: CodioSerializedEvent[];
+  initialFrame: CodioSerializedFile[];
+}
+
+declare interface Device {
+  id?: number;
+  alternativeName?: string;
+  name: string;
+}
+
+declare interface DeviceList {
+  videoDevices: Device[];
+  audioDevices: Device[];
+}
+
 declare type CodioFrame = Array<CodioFile>;

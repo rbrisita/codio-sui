@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import * as fs from 'fs';
 import * as util from 'util';
 import { platform } from 'os';
+import { sep } from 'path';
+
 //filesystem
 export const createReadStream = fs.createReadStream;
 export const promiseExec = util.promisify(exec);
@@ -74,4 +76,128 @@ export async function asyncForEach(
  */
 export function isTreeItem(obj = {}): boolean {
   return 'contextValue' in obj || 'command' in obj;
+}
+
+/**
+ * Finds Process Id of given command. This is Windows based because of how
+ * some third party package managers install shims.
+ * @see https://github.com/lukesampson/scoop/issues/4376
+ * @param cmd Command to find in the tasklist.
+ * @returns Resolves to PID found or error strings if rejected.
+ */
+export function findPID(cmd: string): Promise<number> {
+  return new Promise((res, rej) => {
+    let output = '';
+
+    const callAndParse = (cmd: string) => {
+      const taskListProcess = spawn('tasklist.exe', ['/FI', `"IMAGENAME eq ${cmd}"`, '/FO', 'CSV', '/NH'], {
+        shell: 'powershell.exe',
+      });
+
+      taskListProcess.stderr.on('data', (data) => {
+        rej(data.toString());
+      });
+
+      // Compile data received
+      taskListProcess.stdout.on('data', (data) => {
+        output += data.toString();
+      });
+
+      taskListProcess.on('close', (code) => {
+        if (code) {
+          rej(`Error code: ${code}`);
+        }
+
+        const arr = getLastLine(output).split(',');
+        if (arr.length < 2) {
+          rej('PID in array not found.');
+        }
+
+        const pid = parseInt(arr[1]);
+        pid > 0 ? res(pid) : rej('Valid PID not found.');
+      });
+    };
+
+    callAndParse(cmd);
+  });
+}
+
+/**
+ * Get the last non-empty line from the given output.
+ * @param output Output to parse.
+ * @returns String found or empty string on no data.
+ */
+function getLastLine(output: string): string {
+  let lines = output.split('\n');
+  lines = lines.filter((line) => line.length);
+  const last = lines[lines.length - 1];
+  return last.replace(/"/gm, '');
+}
+
+let extensionPath = null;
+
+/**
+ * Save extension path for later use.
+ * @param path Path of extension being executed.
+ */
+export function saveExtensionPath(path: string): void {
+  extensionPath = path;
+}
+
+/**
+ * Get path to the extension being executed.
+ * @returns The path to the extension being executed.
+ */
+export function getExtensionPath(): string {
+  return extensionPath;
+}
+
+/**
+ * Check if dependencies need to be installed.
+ * @returns Resolve to true if all dependencies are available.
+ */
+export async function checkDependencies(): Promise<boolean> {
+  // TODO: ffmpeg
+
+  // Recorder Pause/Resume
+  if (isWindows) {
+    const libPath = `${getExtensionPath()}${sep}dependencies${sep}win${sep}win32-${process.arch}_lib.node`;
+    const fileExists = await exists(libPath);
+    if (!fileExists) {
+      return await installWindowsPauseResume();
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Install ntsuspend.
+ */
+async function installWindowsPauseResume(): Promise<boolean> {
+  const libPath = `${getExtensionPath()}${sep}dependencies${sep}win${sep}install.cjs`;
+
+  return new Promise((res, rej) => {
+    try {
+      const cp = spawn('node', ['--unhandled-rejections=strict', libPath]);
+      cp.on('close', (code) => {
+        if (code) {
+          console.error('installWindowsPauseResume process error code:', code);
+          rej(false);
+        }
+
+        res(true);
+      });
+
+      cp.on('error', (data) => {
+        console.error('installWindowsPauseResume error data', data.toString());
+      });
+      cp.stderr.on('data', (data) => {
+        console.info('installWindowsPauseResume info:', data.toString());
+      });
+    } catch (error) {
+      console.error('Install Error', error.message);
+      rej(false);
+    }
+  });
 }

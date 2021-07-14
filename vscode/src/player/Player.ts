@@ -56,7 +56,7 @@ export default class Player {
       }
 
       this.timer = new Timer(this.codioLength);
-      this.timer.onFinish(() => this.pause());
+      this.timer.onFinish(() => this.stop());
     } catch (e) {
       console.log('loadCodio failed', e);
     }
