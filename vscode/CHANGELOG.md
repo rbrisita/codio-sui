@@ -1,3 +1,6 @@
+## [0.8.0]
+- Recordings can now be paused and resumed.
+
 ## [0.7.0]
 - Recordings can now be canceled.
 
